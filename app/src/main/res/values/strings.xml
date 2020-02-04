@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Pexels Fotos Wallpapers</string>
+    <string name="search">Buscar</string>
+    <string name="wallpaperChange">Wallpaper cambiado.</string>
+    <string name="loadImageError">Error al cargar la imagen.</string>
+    <string name="connectionError">Fallo la conexión con el servidor.</string>
+    <string name="wallpaperButton">USAR COMO FONDO DE PANTALLA</string>
+    <string name="no_results">No tenemos nada para mostrarte, proba con otra búsqueda!</string>
+    <string name="sad_face_desc">Sad Face</string>
+</resources>
