@@ -5,20 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.services.PexelService;
 import com.bove.martin.pexel.services.RetrofitService;
-import com.bove.martin.pexel.util.GsonDeserializador;
-import com.bove.martin.pexel.util.Util;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.bove.martin.pexel.utils.Constants;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by Martín Bove on 01-Feb-20.
  * E-mail: mbove77@gmail.com
@@ -41,9 +36,9 @@ public class FotosRepository {
         Call<List<Foto>> callFotos;
 
         if(queryString != null) {
-            callFotos = fotosApi.getSearch(queryString, Util.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getSearch(queryString, Constants.ITEM_NUMBER, pageNumber);
         } else {
-            callFotos = fotosApi.getCurated(Util.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getCurated(Constants.ITEM_NUMBER, pageNumber);
         }
 
         callFotos.enqueue(new Callback<List<Foto>>() {

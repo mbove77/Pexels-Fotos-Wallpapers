@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.util;
+package com.bove.martin.pexel.utils;
 
 import com.bove.martin.pexel.model.Foto;
 import com.google.gson.JsonArray;
