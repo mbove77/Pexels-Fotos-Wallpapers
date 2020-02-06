@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.services.PexelService;
+import com.bove.martin.pexel.services.RetrofitService;
 import com.bove.martin.pexel.util.GsonDeserializador;
 import com.bove.martin.pexel.util.Util;
 import com.google.gson.GsonBuilder;
@@ -24,9 +25,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class FotosRepository {
     private static FotosRepository instance;
-    private Retrofit retrofit;
-    private PexelService service;
     private ArrayList<Foto> tempFotos = new ArrayList<>();
+    private PexelService fotosApi;
 
     public static FotosRepository getInstance() {
         if(instance == null) {
@@ -36,22 +36,20 @@ public class FotosRepository {
     }
 
     public MutableLiveData<List<Foto>> getFotos(String queryString, int pageNumber, boolean resetList) {
-        initRetroFitAndGson();
-
+        fotosApi = new RetrofitService().createService(PexelService.class);
         MutableLiveData<List<Foto>> fotoData = new MutableLiveData<>();
-        service = retrofit.create(PexelService.class);
         Call<List<Foto>> callFotos;
 
         if(queryString != null) {
-            callFotos = service.getSearch(queryString, Util.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getSearch(queryString, Util.ITEM_NUMBER, pageNumber);
         } else {
-            callFotos = service.getCurated(Util.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getCurated(Util.ITEM_NUMBER, pageNumber);
         }
 
         callFotos.enqueue(new Callback<List<Foto>>() {
             @Override
             public void onResponse(Call<List<Foto>> call, Response<List<Foto>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     if(resetList) {
                         tempFotos.clear();
                     }
@@ -66,16 +64,5 @@ public class FotosRepository {
             }
         });
         return fotoData;
-    }
-
-    private void initRetroFitAndGson() {
-        GsonBuilder builder = new GsonBuilder();
-        Type assetsType = new TypeToken<List<Foto>>() {}.getType();
-        builder.registerTypeAdapter(assetsType, new GsonDeserializador());
-
-        retrofit = new Retrofit.Builder()
-                .baseUrl(Util.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(builder.create()))
-                .build();
     }
 }

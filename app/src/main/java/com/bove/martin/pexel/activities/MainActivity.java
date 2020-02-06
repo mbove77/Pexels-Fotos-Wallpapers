@@ -14,8 +14,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ViewFlipper;
 
 import com.bove.martin.pexel.R;
 import com.bove.martin.pexel.adapter.FotoAdapter;
@@ -29,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private FotoAdapter adapter;
+    private ViewFlipper viewFlipper;
     private SwipeRefreshLayout swipeContainer;
 
     private String queryString;
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
 
         initRecyclerView();
 
+        viewFlipper = findViewById(R.id.mainViewFlipper);
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(this);
 
@@ -78,16 +79,25 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    // Observer for data changes in Fotos list.
+    /*
+    * Observer for data changes in Fotos list.
+    * DisplayChild 0 is the swipeLayout with recyclerView.
+    * DisplayChild 1 is no result layout.
+    */
     @Override
     public void onChanged(List<Foto> fotos) {
-        if (adapter == null) {
-            adapter = new FotoAdapter(fotos, R.layout.recycler_view_item, this);
-            recyclerView.setAdapter(adapter);
-            hideProgressBar();
+        if(fotos.size() > 0) {
+            viewFlipper.setDisplayedChild(0);
+            if (adapter == null) {
+                adapter = new FotoAdapter(fotos, R.layout.recycler_view_item, this);
+                recyclerView.setAdapter(adapter);
+                hideProgressBar();
+            } else {
+                adapter.notifyDataSetChanged();
+                hideProgressBar();
+            }
         } else {
-            adapter.notifyDataSetChanged();
-            hideProgressBar();
+            viewFlipper.setDisplayedChild(1);
         }
     }
 
