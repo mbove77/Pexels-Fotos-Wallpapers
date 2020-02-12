@@ -19,7 +19,7 @@ import android.widget.ViewFlipper;
 import com.bove.martin.pexel.R;
 import com.bove.martin.pexel.adapter.FotoAdapter;
 import com.bove.martin.pexel.model.Foto;
-import com.bove.martin.pexel.utils.Constants;
+import com.bove.martin.pexel.utils.AppConstants;
 import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
@@ -137,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     @Override
     public void onItemClick(Foto foto, int posicion) {
         Intent largeFotoIntent = new Intent(this, FullFotoActivity.class);
-        largeFotoIntent.putExtra(Constants.PHOTO_URL, foto.getLarge());
-        largeFotoIntent.putExtra(Constants.LARGE_FOTO_URL, foto.getLarge2x());
-        largeFotoIntent.putExtra(Constants.PHOTOGRAPHER_NAME, foto.getPhotographer());
-        largeFotoIntent.putExtra(Constants.PHOTOGRAPHER_URL, foto.getUrl());
+        largeFotoIntent.putExtra(AppConstants.PHOTO_URL, foto.getLarge());
+        largeFotoIntent.putExtra(AppConstants.LARGE_FOTO_URL, foto.getLarge2x());
+        largeFotoIntent.putExtra(AppConstants.PHOTOGRAPHER_NAME, foto.getPhotographer());
+        largeFotoIntent.putExtra(AppConstants.PHOTOGRAPHER_URL, foto.getUrl());
         startActivity(largeFotoIntent);
     }
 

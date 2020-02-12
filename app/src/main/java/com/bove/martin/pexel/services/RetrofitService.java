@@ -2,7 +2,7 @@ package com.bove.martin.pexel.services;
 
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.utils.GsonDeserializador;
-import com.bove.martin.pexel.utils.Constants;
+import com.bove.martin.pexel.utils.AppConstants;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitService {
 
     private  Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(AppConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().registerTypeAdapter(new TypeToken<List<Foto>>() {
             }.getType(), new GsonDeserializador()).create()))
             .build();

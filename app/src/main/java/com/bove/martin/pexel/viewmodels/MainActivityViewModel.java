@@ -1,15 +1,12 @@
 package com.bove.martin.pexel.viewmodels;
 
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.repositories.FotosRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.services.PexelService;
 import com.bove.martin.pexel.services.RetrofitService;
-import com.bove.martin.pexel.utils.Constants;
+import com.bove.martin.pexel.utils.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +36,9 @@ public class FotosRepository {
         Call<List<Foto>> callFotos;
 
         if(queryString != null) {
-            callFotos = fotosApi.getSearch(queryString, Constants.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getSearch(queryString, AppConstants.ITEM_NUMBER, pageNumber);
         } else {
-            callFotos = fotosApi.getCurated(Constants.ITEM_NUMBER, pageNumber);
+            callFotos = fotosApi.getCurated(AppConstants.ITEM_NUMBER, pageNumber);
         }
 
         callFotos.enqueue(new Callback<List<Foto>>() {

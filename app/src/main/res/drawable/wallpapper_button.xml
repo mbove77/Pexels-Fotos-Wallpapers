@@ -2,20 +2,23 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
         <shape>
-            <solid android:color="#CDBAB9B9"/>
+            <solid android:color="#BFBAB9B9"/>
             <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
+            <corners android:radius="7dp"/>
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="#CDBA2552"/>
+            <solid android:color="#BFBA2552"/>
             <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
+            <corners android:radius="7dp"/>
         </shape>
     </item>
     <item>
         <shape>
-            <solid android:color="#CCFF4081"/>
+            <solid android:color="#BFFF4081"/>
             <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp" />
+            <corners android:radius="7dp"/>
         </shape>
     </item>
 </selector>

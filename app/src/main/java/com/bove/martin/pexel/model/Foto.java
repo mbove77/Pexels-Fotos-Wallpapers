@@ -138,4 +138,5 @@ public class Foto {
     public void setTiny(String tiny) {
         this.tiny = tiny;
     }
+
 }
