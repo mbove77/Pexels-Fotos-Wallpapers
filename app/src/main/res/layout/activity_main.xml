@@ -6,18 +6,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-       android:id="@+id/swipeContainer"
+   <LinearLayout
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:visibility="visible">
+       android:layout_height="wrap_content"
+       android:animateLayoutChanges="true"
+       android:paddingTop="4dp"
+       android:orientation="vertical">
 
-      <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/recyclerViewFotos"
+      <LinearLayout android:id="@+id/searchesLayout"
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+         <TextView
+             android:id="@+id/tituloBusquedas"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="4dp"
+             android:fontFamily="sans-serif-condensed-light"
+             android:text="@string/popular_searches"
+             android:textAlignment="textStart"
+             android:textAllCaps="false"
+             android:textSize="18sp" />
+
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/recyclerViewSearchs"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:scrollbars="horizontal" />
+      </LinearLayout>
+
+      <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+          android:id="@+id/swipeContainer"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:scrollbars="vertical" />
-   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+          android:layout_marginTop="2dp">
+
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/recyclerViewFotos"
+             android:layout_width="match_parent"
+             android:layout_height="fill_parent"
+             android:scrollbars="vertical" />
+      </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+   </LinearLayout>
+
+
 
    <LinearLayout
        android:layout_width="match_parent"
@@ -38,6 +72,7 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="16dp"
           android:text="@string/no_results" />
+
    </LinearLayout>
 
 </ViewFlipper>

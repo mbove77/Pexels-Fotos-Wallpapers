@@ -2,5 +2,8 @@
     <gradient
         android:angle="90"
         android:endColor="@android:color/transparent"
+        android:centerColor="@android:color/transparent"
         android:startColor="@android:color/black" />
+    <corners android:bottomLeftRadius="7dp" android:bottomRightRadius="7dp"/>
+
 </shape>

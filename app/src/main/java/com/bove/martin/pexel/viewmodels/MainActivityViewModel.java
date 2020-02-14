@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.bove.martin.pexel.model.Foto;
+import com.bove.martin.pexel.model.Search;
 import com.bove.martin.pexel.repositories.FotosRepository;
+import com.bove.martin.pexel.repositories.PopularSearchsRepository;
 
 import java.util.List;
 
@@ -16,9 +18,11 @@ import java.util.List;
 public class MainActivityViewModel extends ViewModel {
 
     private MutableLiveData<List<Foto>> mFotos;
+    private MutableLiveData<List<Search>> mSearchs;
     private MutableLiveData<String> mQueryString;
 
     private FotosRepository mRepo;
+    private PopularSearchsRepository mPopularSearchRepo;
     private int pageNumber = 1;
 
     public void init() {
@@ -26,6 +30,7 @@ public class MainActivityViewModel extends ViewModel {
             return;
         }
         mRepo = FotosRepository.getInstance();
+        mPopularSearchRepo = PopularSearchsRepository.getInstance();
     }
 
     public void addPage() {
@@ -46,6 +51,11 @@ public class MainActivityViewModel extends ViewModel {
             mFotos = mRepo.getFotos(query, pageNumber, resetList);
         }
         return mFotos;
+    }
+
+    public LiveData<List<Search>> getSearchs() {
+        mSearchs = mPopularSearchRepo.getSearchs();
+        return mSearchs;
     }
 
     public LiveData<String> getQueryString() {

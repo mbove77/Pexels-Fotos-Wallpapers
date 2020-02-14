@@ -4,8 +4,10 @@ import android.content.Intent;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,12 +16,20 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.bove.martin.pexel.R;
 import com.bove.martin.pexel.adapter.FotoAdapter;
+import com.bove.martin.pexel.adapter.SearchAdapter;
 import com.bove.martin.pexel.model.Foto;
+import com.bove.martin.pexel.model.Search;
 import com.bove.martin.pexel.utils.AppConstants;
+import com.bove.martin.pexel.utils.MyRecyclerScroll;
 import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
@@ -34,6 +44,11 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     private String queryString;
     private MainActivityViewModel mainActivityViewModel;
 
+    private RecyclerView recyclerViewSeaches;
+    private RecyclerView.LayoutManager searchesLayoutManager;
+    private SearchAdapter searchAdapter;
+    private LinearLayout searchLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         mainActivityViewModel.init();
 
         initRecyclerView();
+        initRecyclerViewSearch();
 
         viewFlipper = findViewById(R.id.mainViewFlipper);
         swipeContainer = findViewById(R.id.swipeContainer);
@@ -62,6 +78,44 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
 
         getPhotos(queryString, false);
 
+        // Searches Observer
+        mainActivityViewModel.getSearchs().observe(this, new Observer<List<Search>>() {
+            @Override
+            public void onChanged(List<Search> searches) {
+                if(searchAdapter != null) {
+                    recyclerViewSeaches.setAdapter(searchAdapter);
+                } else {
+                    searchAdapter = new SearchAdapter(searches, R.layout.recycler_view_search_item, new SearchAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(Search search, int posicion) {
+                            //Toast.makeText(MainActivity.this, "Click " + search.getSearchInSpanish(), Toast.LENGTH_SHORT).show();
+                            queryString = search.getSearchInEnglish();
+                            searchForPhotos();
+                        }
+                    });
+                    recyclerViewSeaches.setAdapter(searchAdapter);
+                }
+
+            }
+        });
+
+
+        // Hide-show searches based on scroll
+        searchLayout = findViewById(R.id.searchesLayout);
+        recyclerView.addOnScrollListener(new MyRecyclerScroll() {
+            @Override
+            public void show() {
+                searchLayout.setVisibility(View.VISIBLE);
+                searchLayout.animate().translationY(0);
+            }
+
+            @Override
+            public void hide() {
+                searchLayout.animate().translationY(-searchLayout.getHeight()).withEndAction(() -> searchLayout.setVisibility(View.GONE));
+            }
+        });
+
+
         // Observe for changes in queryString
         mainActivityViewModel.getQueryString().observe(this, new Observer<String>() {
             @Override
@@ -77,6 +131,13 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void initRecyclerViewSearch() {
+        recyclerViewSeaches = findViewById(R.id.recyclerViewSearchs);
+        searchesLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        recyclerViewSeaches.setLayoutManager(searchesLayoutManager);
+        recyclerViewSeaches.setItemAnimator(new DefaultItemAnimator());
     }
 
     /*
