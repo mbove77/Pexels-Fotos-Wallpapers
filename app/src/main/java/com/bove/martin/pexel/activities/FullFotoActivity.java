@@ -1,6 +1,7 @@
 package com.bove.martin.pexel.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,11 +11,17 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,9 +43,13 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
-//TODO implement sharing functionality
+//TODO implement download action
+
 
 public class FullFotoActivity extends AppCompatActivity {
     private String photoUrl;
@@ -55,8 +66,8 @@ public class FullFotoActivity extends AppCompatActivity {
     private TextView photographerNameTextView;
 
     private LottieAnimationView succesAnim;
-
     private FullFotoActivityViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +76,15 @@ public class FullFotoActivity extends AppCompatActivity {
 
         initVars();
         loadContentFormBundle();
-        checkPermission();
 
-        viewModel.getHavePermission().observe(this, new Observer<Boolean>() {
+        viewModel.getHaveStoragePermission().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                setWallpaperButoon.setEnabled(aBoolean);
+                if(!aBoolean) {
+                    Toast.makeText(FullFotoActivity.this, R.string.permissionErrorStorage, Toast.LENGTH_LONG).show();
+                } else {
+                    donwloadFotoForSharing();
+                }
             }
         });
 
@@ -212,16 +226,106 @@ public class FullFotoActivity extends AppCompatActivity {
                 });
     }
 
-    private void checkPermission() {
+
+    // Share Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.share_menu, menu);
+
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+
+        shareItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                donwloadFotoForSharing();
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    private void donwloadFotoForSharing() {
+
+        if(viewModel.getHaveStoragePermission().getValue() != null && viewModel.getHaveStoragePermission().getValue()) {
+            showProgressBar();
+
+            Glide.with(getApplicationContext())
+                    .asBitmap()
+                    .load(largePhotoUrl)
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onLoadStarted(@Nullable Drawable placeholder) {
+                            super.onLoadStarted(placeholder);
+                        }
+
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            shareBitmap(resource, "tempFilename") ;
+                            hideProgressBar();
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            Toast.makeText(FullFotoActivity.this, R.string.loadImageError, Toast.LENGTH_SHORT).show();
+                            hideProgressBar();
+                        }
+
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            super.onLoadFailed(errorDrawable);
+                            hideProgressBar();
+                        }
+                    });
+
+        } else {
+            checkStoragePermission();
+        }
+    }
+
+    @SuppressLint("SetWorldReadable")
+    private void shareBitmap (Bitmap bitmap, String fileName) {
+
+        try {
+            String fileExt = ".png";
+            File file = new File(Environment.getExternalStorageDirectory(), File.separator + fileName + fileExt);
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fOut);
+            fOut.flush(); fOut.close();
+            file.setReadable(true, false);
+
+            final Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/*");
+            Uri fileUri = FileProvider.getUriForFile(this, "com.bove.martin.pexel.provider", file);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+
+            if(Build.VERSION.SDK_INT>=24){
+                try{
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void checkStoragePermission() {
         Dexter.withActivity(this)
-                .withPermission(Manifest.permission.SET_WALLPAPER)
+                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new PermissionListener() {
                     @Override public void onPermissionGranted(PermissionGrantedResponse response) {
-                        viewModel.setHavePermission(true);
+                        viewModel.setHaveSoragePermission(true);
                     }
                     @Override public void onPermissionDenied(PermissionDeniedResponse response) {
-                        viewModel.setHavePermission(false);
-                        Toast.makeText(FullFotoActivity.this, R.string.permissionError, Toast.LENGTH_LONG).show();
+                        viewModel.setHaveSoragePermission(false);
                     }
                     @Override public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
                         token.continuePermissionRequest();

@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
  * E-mail: mbove77@gmail.com
  */
 public abstract class MyRecyclerScroll extends RecyclerView.OnScrollListener {
-    private static final float HIDE_THRESHOLD = 100;
-    private static final float SHOW_THRESHOLD = 50;
+    private static final float HIDE_THRESHOLD = 150;
+    private static final float SHOW_THRESHOLD = 150;
 
     int scrollDist = 0;
     private boolean isVisible = true;

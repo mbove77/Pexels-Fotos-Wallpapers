@@ -17,8 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -29,14 +27,22 @@ import com.bove.martin.pexel.adapter.SearchAdapter;
 import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.model.Search;
 import com.bove.martin.pexel.utils.AppConstants;
+import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener;
 import com.bove.martin.pexel.utils.MyRecyclerScroll;
 import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
 
+//TODO smooth the load of new items
+//TODO round corners in photos and more gap between them
+//TODO when search get the scroll to top
+//TODO post new screen shots to google play
+//TODO smooth animation on load new items
+
+
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+    private StaggeredGridLayoutManager layoutManager;
     private FotoAdapter adapter;
     private ViewFlipper viewFlipper;
     private SwipeRefreshLayout swipeContainer;
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(this);
 
-        // When reach the final of the list call for more items.
+       /* // When reach the final of the list call for more items.
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -74,7 +80,16 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
                     getMorePhotos();
                 }
             }
+        });*/
+
+        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Toast.makeText(MainActivity.this,"LAst",Toast.LENGTH_SHORT).show();
+                getMorePhotos();
+            }
         });
+
 
         getPhotos(queryString, false);
 
@@ -209,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     @Override
     public void onRefresh() {
         mainActivityViewModel.resetPage();
+
         getPhotos(queryString, true);
     }
 

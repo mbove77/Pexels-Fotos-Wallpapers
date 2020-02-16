@@ -10,30 +10,19 @@ import androidx.lifecycle.ViewModel;
  * E-mail: mbove77@gmail.com
  */
 public class FullFotoActivityViewModel extends ViewModel {
-    private MutableLiveData<Boolean> mHavePermission;
-    private MutableLiveData<Boolean> mIsLoading;
+    private MutableLiveData<Boolean> mHaveStorgePermission;
 
     public FullFotoActivityViewModel() {
-        mHavePermission = new MutableLiveData<Boolean>();
-        mIsLoading = new MutableLiveData<Boolean>();
-        mHavePermission.setValue(true);
-    }
-    public LiveData<Boolean> getHavePermission() {
-        return mHavePermission;
-    }
-
-    public void setHavePermission(Boolean value) {
-        mHavePermission.setValue(value);
-    }
-
-    public LiveData<Boolean> isLoading() {
-        return mIsLoading;
-    }
-
-    public void setIsLoading(Boolean value) {
-        mIsLoading.setValue(value);
+        mHaveStorgePermission = new MutableLiveData<Boolean>();
     }
 
 
+    public LiveData<Boolean> getHaveStoragePermission() {
+        return mHaveStorgePermission;
+    }
+
+    public void setHaveSoragePermission(Boolean value) {
+        mHaveStorgePermission.setValue(value);
+    }
 
 }
