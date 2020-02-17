@@ -10,8 +10,8 @@ android {
         applicationId "com.bove.martin.pexel"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.2"
+        versionCode 4
+        versionName "1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -61,6 +61,9 @@ dependencies {
     implementation 'com.karumi:dexter:6.0.2'
 
     implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+
 }
 repositories {
     mavenCentral()

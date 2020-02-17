@@ -3,9 +3,13 @@ package com.bove.martin.pexel.adapter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
 import com.bove.martin.pexel.R;
@@ -21,6 +25,7 @@ public class FotoAdapter extends RecyclerView.Adapter<FotoAdapter.ViewHolder> {
     private List<Foto> fotos;
     private int layout;
     private OnItemClickListener listener;
+    int oldposition = 0;
 
 
     public FotoAdapter(List<Foto> fotos, int layout, OnItemClickListener listener) {
@@ -41,11 +46,33 @@ public class FotoAdapter extends RecyclerView.Adapter<FotoAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(fotos.get(position), listener);
+        if (position>oldposition) {
+            animate(holder,true);
+        }
+        else animate(holder,false);
+        oldposition = position;
     }
 
     @Override
     public int getItemCount() {
         return fotos.size();
+    }
+
+    void animate(FotoAdapter.ViewHolder hold,boolean down) {
+        ObjectAnimator animator = new ObjectAnimator().ofFloat(hold.itemView,"TranslationX",-100f,0f);
+        animator.setInterpolator(new OvershootInterpolator());
+        ObjectAnimator animator1 = new ObjectAnimator().ofFloat(hold.itemView,"TranslationX",100f,0f);
+        animator1.setInterpolator(new OvershootInterpolator());
+        ObjectAnimator animator2 = new ObjectAnimator().ofFloat(hold.itemView,"TranslationY",down?100f:-100f,0f);
+        animator.setInterpolator(new OvershootInterpolator());
+        ObjectAnimator animator3 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleX",1.2f,1f);
+        animator3.setInterpolator(new AnticipateOvershootInterpolator());
+        ObjectAnimator animator4 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleY",1.2f,1f);
+        animator4.setInterpolator(new AnticipateOvershootInterpolator());
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animator,animator1,animator2,animator3,animator4);
+        set.setDuration(1000);
+        set.start();
     }
 
     // ViewHolder

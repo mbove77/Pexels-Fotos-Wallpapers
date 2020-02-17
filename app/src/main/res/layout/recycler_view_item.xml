@@ -3,12 +3,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="3dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="6dp">
 
-    <ImageView
+    <com.github.siyamed.shapeimageview.mask.PorterShapeImageView
         android:id="@+id/imageViewFoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        app:siShape="@drawable/round_corner"/>
 </LinearLayout>

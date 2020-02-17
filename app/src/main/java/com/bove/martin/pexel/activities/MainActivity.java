@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
+
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -34,11 +34,12 @@ import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 import java.util.List;
 
 //TODO smooth the load of new items
-//TODO round corners in photos and more gap between them
 //TODO when search get the scroll to top
 //TODO post new screen shots to google play
 //TODO smooth animation on load new items
-
+//TODO coordinator layout for hid show search items
+//TODO horizontal layout
+//TODO implement voice search
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
@@ -85,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Toast.makeText(MainActivity.this,"LAst",Toast.LENGTH_SHORT).show();
                 getMorePhotos();
             }
         });
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         });
 
 
-        // Hide-show searches based on scroll
+       /* // Hide-show searches based on scroll
         searchLayout = findViewById(R.id.searchesLayout);
         recyclerView.addOnScrollListener(new MyRecyclerScroll() {
             @Override
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
             public void hide() {
                 searchLayout.animate().translationY(-searchLayout.getHeight()).withEndAction(() -> searchLayout.setVisibility(View.GONE));
             }
-        });
+        });*/
 
 
         // Observe for changes in queryString
@@ -145,7 +145,14 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         recyclerView = findViewById(R.id.recyclerViewFotos);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//      gridLayoutManager = new GridLayoutManager(this, 2);
+//      recyclerView.setLayoutManager(gridLayoutManager);
+
+//        int resId = R.anim.grid_layout_animation_from_bottom;
+//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, resId);
+//        recyclerView.setLayoutAnimation(animation);
+
+//      recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void initRecyclerViewSearch() {
