@@ -15,14 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.bove.martin.pexel.R;
@@ -37,12 +35,7 @@ import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
 
-//TODO smooth the load of new items
-//TODO when search get the scroll to top
 //TODO post new screen shots to google play
-//TODO smooth animation on load new items
-//TODO coordinator layout for hid show search items
-//TODO horizontal layout
 //TODO implement voice search
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
@@ -60,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     private SearchAdapter searchAdapter;
     private LinearLayout searchLayout;
 
+    private SearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,18 +70,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(this);
 
-       /* // When reach the final of the list call for more items.
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-                if (!recyclerView.canScrollVertically(1)) {
-                    getMorePhotos();
-                }
-            }
-        });*/
-
+        // load more items whew reach near the end of the list.
         recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -94,10 +78,10 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
             }
         });
 
-
+        // initial load of the photos
         getPhotos(queryString, false);
 
-        // Searches Observer
+        // searches observer
         mainActivityViewModel.getSearchs().observe(this, new Observer<List<Search>>() {
             @Override
             public void onChanged(List<Search> searches) {
@@ -110,16 +94,25 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
                             //Toast.makeText(MainActivity.this, "Click " + search.getSearchInSpanish(), Toast.LENGTH_SHORT).show();
                             queryString = search.getSearchInEnglish();
                             searchForPhotos();
+                            searchView.setIconified(true);
+                            searchView.onActionViewCollapsed();
                         }
                     });
                     recyclerViewSeaches.setAdapter(searchAdapter);
                 }
-
             }
         });
 
+        // queryString observer
+        mainActivityViewModel.getQueryString().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                queryString = s;
+                searchForPhotos();
+            }
+        });
 
-        // Hide-show searches based on scroll
+        // hide & show searches recycler based on scroll.
         searchLayout = findViewById(R.id.searchesLayout);
         recyclerView.addOnScrollListener(new MyRecyclerScroll() {
             @Override
@@ -130,16 +123,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
             @Override
             public void hide() {
                 searchLayout.setVisibility(View.GONE);
-            }
-        });
-
-
-        // Observe for changes in queryString
-        mainActivityViewModel.getQueryString().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                queryString = s;
-                searchForPhotos();
             }
         });
     }
@@ -182,7 +165,12 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
                 recyclerView.setAdapter(adapter);
                 hideProgressBar();
             } else {
-                adapter.notifyDataSetChanged();
+                if(fotos.size() > AppConstants.ITEM_NUMBER) {
+                    adapter.notifyItemRangeInserted(fotos.size() - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER);
+                } else {
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(0);
+                }
                 hideProgressBar();
             }
         } else {
@@ -197,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         inflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

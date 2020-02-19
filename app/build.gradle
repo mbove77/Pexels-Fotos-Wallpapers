@@ -10,8 +10,8 @@ android {
         applicationId "com.bove.martin.pexel"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 4
-        versionName "1.4"
+        versionCode 5
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

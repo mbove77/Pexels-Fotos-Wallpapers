@@ -58,19 +58,19 @@ public class FotoAdapter extends RecyclerView.Adapter<FotoAdapter.ViewHolder> {
         return fotos.size();
     }
 
-    void animate(FotoAdapter.ViewHolder hold,boolean down) {
+    void animate(FotoAdapter.ViewHolder hold, boolean down) {
         ObjectAnimator animator = new ObjectAnimator().ofFloat(hold.itemView,"TranslationX",-100f,0f);
         animator.setInterpolator(new OvershootInterpolator());
         ObjectAnimator animator1 = new ObjectAnimator().ofFloat(hold.itemView,"TranslationX",100f,0f);
         animator1.setInterpolator(new OvershootInterpolator());
-        ObjectAnimator animator2 = new ObjectAnimator().ofFloat(hold.itemView,"TranslationY",down?100f:-100f,0f);
+        ObjectAnimator animator2 = new ObjectAnimator().ofFloat(hold.itemView,"TranslationY",down?120f:-120f,0f);
         animator.setInterpolator(new OvershootInterpolator());
-        ObjectAnimator animator3 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleX",1.2f,1f);
+        ObjectAnimator animator3 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleX",0.9f,1f);
         animator3.setInterpolator(new AnticipateOvershootInterpolator());
-        ObjectAnimator animator4 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleY",1.2f,1f);
+        ObjectAnimator animator4 = new ObjectAnimator().ofFloat(hold.itemView,"ScaleY",0.9f,1f);
         animator4.setInterpolator(new AnticipateOvershootInterpolator());
         AnimatorSet set = new AnimatorSet();
-        set.playTogether(animator,animator1,animator2,animator3,animator4);
+        set.playTogether(animator2,animator3,animator4);
         set.setDuration(1000);
         set.start();
     }
