@@ -25,7 +25,7 @@ public class FotoAdapter extends RecyclerView.Adapter<FotoAdapter.ViewHolder> {
     private List<Foto> fotos;
     private int layout;
     private OnItemClickListener listener;
-    int oldposition = 0;
+    private int oldposition = 0;
 
 
     public FotoAdapter(List<Foto> fotos, int layout, OnItemClickListener listener) {

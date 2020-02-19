@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -118,20 +119,19 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         });
 
 
-       /* // Hide-show searches based on scroll
+        // Hide-show searches based on scroll
         searchLayout = findViewById(R.id.searchesLayout);
         recyclerView.addOnScrollListener(new MyRecyclerScroll() {
             @Override
             public void show() {
                 searchLayout.setVisibility(View.VISIBLE);
-                searchLayout.animate().translationY(0);
             }
 
             @Override
             public void hide() {
-                searchLayout.animate().translationY(-searchLayout.getHeight()).withEndAction(() -> searchLayout.setVisibility(View.GONE));
+                searchLayout.setVisibility(View.GONE);
             }
-        });*/
+        });
 
 
         // Observe for changes in queryString
@@ -148,16 +148,10 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d("Daiya", "ORIENTATION_LANDSCAPE");
             layoutManager.setSpanCount(3);
-           // searchesLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager.setSpanCount(2);
-            //searchesLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-            Log.d("Daiya", "ORIENTATION_PORTRAIT");
         }
     }
 
@@ -165,14 +159,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         recyclerView = findViewById(R.id.recyclerViewFotos);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-//      gridLayoutManager = new GridLayoutManager(this, 2);
-//      recyclerView.setLayoutManager(gridLayoutManager);
-
-//        int resId = R.anim.grid_layout_animation_from_bottom;
-//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, resId);
-//        recyclerView.setLayoutAnimation(animation);
-
-//      recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void initRecyclerViewSearch() {
@@ -251,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     @Override
     public void onRefresh() {
         mainActivityViewModel.resetPage();
-
         getPhotos(queryString, true);
     }
 
