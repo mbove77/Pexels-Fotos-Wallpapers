@@ -8,11 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     private MainActivityViewModel mainActivityViewModel;
 
     private RecyclerView recyclerViewSeaches;
-    private RecyclerView.LayoutManager searchesLayoutManager;
+    private LinearLayoutManager searchesLayoutManager;
     private SearchAdapter searchAdapter;
     private LinearLayout searchLayout;
 
@@ -139,6 +142,23 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
                 searchForPhotos();
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d("Daiya", "ORIENTATION_LANDSCAPE");
+            layoutManager.setSpanCount(3);
+           // searchesLayoutManager.setOrientation(RecyclerView.VERTICAL);
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager.setSpanCount(2);
+            //searchesLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+            Log.d("Daiya", "ORIENTATION_PORTRAIT");
+        }
     }
 
     private void initRecyclerView() {
