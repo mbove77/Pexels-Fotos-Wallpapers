@@ -25,6 +25,7 @@ public class PopularSearchsRepository {
         MutableLiveData<List<Search>> mData = new MutableLiveData<>();
         ArrayList<Search> randomOrderSearch = populateSearchList();
         Collections.shuffle(randomOrderSearch);
+        //randomOrderSearch.add(0, new Search("pexels","Fotos del Día", null));
         mData.setValue(randomOrderSearch);
         return mData;
     }

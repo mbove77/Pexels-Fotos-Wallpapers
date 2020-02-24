@@ -27,7 +27,6 @@ import com.bove.martin.pexel.R;
 import com.bove.martin.pexel.adapter.FotoAdapter;
 import com.bove.martin.pexel.adapter.SearchAdapter;
 import com.bove.martin.pexel.model.Foto;
-import com.bove.martin.pexel.model.Search;
 import com.bove.martin.pexel.utils.AppConstants;
 import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener;
 import com.bove.martin.pexel.utils.MyRecyclerScroll;
@@ -35,8 +34,11 @@ import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
 
-//TODO post new screen shots to google play
 //TODO implement voice search
+//TODO implement connection monitor
+//TODO implement black theme
+
+
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
@@ -82,34 +84,22 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         getPhotos(queryString, false);
 
         // searches observer
-        mainActivityViewModel.getSearchs().observe(this, new Observer<List<Search>>() {
-            @Override
-            public void onChanged(List<Search> searches) {
-                if(searchAdapter != null) {
-                    recyclerViewSeaches.setAdapter(searchAdapter);
-                } else {
-                    searchAdapter = new SearchAdapter(searches, R.layout.recycler_view_search_item, new SearchAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(Search search, int posicion) {
-                            //Toast.makeText(MainActivity.this, "Click " + search.getSearchInSpanish(), Toast.LENGTH_SHORT).show();
-                            queryString = search.getSearchInEnglish();
-                            searchForPhotos();
-                            searchView.setIconified(true);
-                            searchView.onActionViewCollapsed();
-                        }
-                    });
-                    recyclerViewSeaches.setAdapter(searchAdapter);
-                }
+        mainActivityViewModel.getSearchs().observe(this, searches -> {
+            if(searchAdapter != null) {
+                recyclerViewSeaches.setAdapter(searchAdapter);
+            } else {
+                searchAdapter = new SearchAdapter(searches, R.layout.recycler_view_search_item, (search, posicion) -> {
+                   //TODO implementar la categoria por defecto. revisar por que si el query string esta null, no carga mas paginas.
+                   mainActivityViewModel.setQueryString(search.getSearchInEnglish());
+                });
+                recyclerViewSeaches.setAdapter(searchAdapter);
             }
         });
 
         // queryString observer
-        mainActivityViewModel.getQueryString().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                queryString = s;
-                searchForPhotos();
-            }
+        mainActivityViewModel.getQueryString().observe(this, s -> {
+            queryString = s;
+            searchForPhotos();
         });
 
         // hide & show searches recycler based on scroll.
@@ -196,14 +186,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mainActivityViewModel.setQueryString(null);
                 return false;
             }
         });

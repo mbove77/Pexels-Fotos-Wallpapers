@@ -31,6 +31,7 @@ public class MainActivityViewModel extends ViewModel {
         }
         mRepo = FotosRepository.getInstance();
         mPopularSearchRepo = PopularSearchsRepository.getInstance();
+        mQueryString = new MutableLiveData<String>();
     }
 
     public void addPage() {
@@ -39,6 +40,7 @@ public class MainActivityViewModel extends ViewModel {
 
     public void resetPage() {
         pageNumber = 1;
+        mQueryString.setValue(null);
     }
 
     public LiveData<List<Foto>> getFotos(String query, Boolean resetList) {
@@ -58,17 +60,12 @@ public class MainActivityViewModel extends ViewModel {
         return mSearchs;
     }
 
+    public void setQueryString(String query) {
+        mQueryString.postValue(query);
+    }
+
     public LiveData<String> getQueryString() {
-        if(mQueryString == null ) {
-            mQueryString = new MutableLiveData<String>();
-        }
         return mQueryString;
     }
-
-    public void setQueryString(String query) {
-        mQueryString.setValue(query);
-    }
-
-
 
 }

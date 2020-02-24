@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bove.martin.pexel.R;
-import com.bove.martin.pexel.model.Foto;
 import com.bove.martin.pexel.model.Search;
 import com.bumptech.glide.Glide;
 
@@ -23,9 +22,9 @@ import java.util.List;
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private List<Search> searches;
     private int layout;
-    private OnItemClickListener listener;
+    private OnSearchItemClickListener listener;
 
-    public SearchAdapter(List<Search> searches, int layout, OnItemClickListener listener) {
+    public SearchAdapter(List<Search> searches, int layout, OnSearchItemClickListener listener) {
         this.searches = searches;
         this.layout = layout;
         this.listener = listener;
@@ -62,26 +61,32 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
 
         // Aca esta la logica de remplazo de datos y asiganacion de eventos
-        public void bind(final Search search, final OnItemClickListener listener) {
+        public void bind(final Search search, final OnSearchItemClickListener listener) {
 
-            Glide.with(itemView)
-                    .load(search.getPhoto())
-                    .placeholder(R.drawable.placeholder)
-                    .into(imageViewFoto);
-
+            // if photo is null is the curated especial item
+            if(search.getPhoto() != null) {
+                Glide.with(itemView)
+                        .load(search.getPhoto())
+                        .placeholder(R.drawable.placeholder)
+                        .into(imageViewFoto);
+            } else {
+                Glide.with(itemView)
+                        .load(R.drawable.curated)
+                        .into(imageViewFoto);
+            }
             searchTerm.setText(search.getSearchInSpanish());
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(search, getAdapterPosition());
+                    listener.onSearchSuggestItemClick(search, getAdapterPosition());
                 }
             });
         }
     }
 
     // Listener para comunicar el item click
-    public interface OnItemClickListener {
-        void onItemClick(Search search, int posicion);
+    public interface OnSearchItemClickListener {
+        void onSearchSuggestItemClick(Search search, int posicion);
     }
 }
