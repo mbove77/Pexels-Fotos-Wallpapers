@@ -312,11 +312,12 @@ public class FullFotoActivity extends AppCompatActivity {
 
             startActivity(intent);
         } catch (Exception e) {
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
 
-
+    // TODO agregar el permiso de lectura.
     private void checkStoragePermission() {
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)

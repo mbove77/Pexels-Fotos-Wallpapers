@@ -2,6 +2,7 @@ package com.bove.martin.pexel.activities;
 
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,9 +37,7 @@ import java.util.List;
 
 //TODO implement voice search
 //TODO implement connection monitor
-//TODO implement black theme
-
-
+//TODO ver que hacer cuando esta escrita una busqueda y se apreta en una categoria.
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     private ViewFlipper viewFlipper;
     private SwipeRefreshLayout swipeContainer;
 
-    private String queryString;
     private MainActivityViewModel mainActivityViewModel;
 
     private RecyclerView recyclerViewSeaches;
@@ -63,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         setContentView(R.layout.activity_main);
 
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        mainActivityViewModel.init();
 
         initRecyclerView();
         initRecyclerViewSearch();
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         });
 
         // initial load of the photos
-        getPhotos(queryString, false);
+        getPhotos(false);
 
         // searches observer
         mainActivityViewModel.getSearchs().observe(this, searches -> {
@@ -89,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
                 recyclerViewSeaches.setAdapter(searchAdapter);
             } else {
                 searchAdapter = new SearchAdapter(searches, R.layout.recycler_view_search_item, (search, posicion) -> {
-                   //TODO implementar la categoria por defecto. revisar por que si el query string esta null, no carga mas paginas.
                    mainActivityViewModel.setQueryString(search.getSearchInEnglish());
                 });
                 recyclerViewSeaches.setAdapter(searchAdapter);
@@ -98,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
 
         // queryString observer
         mainActivityViewModel.getQueryString().observe(this, s -> {
-            queryString = s;
             searchForPhotos();
         });
 
@@ -118,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -180,7 +175,9 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mainActivityViewModel.setQueryString(query);
+                if(query != null && query != mainActivityViewModel.getQueryString().getValue()) {
+                    mainActivityViewModel.setQueryString(query);
+                }
                 return false;
             }
 
@@ -206,8 +203,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     // onRefresh SwipeContainer
     @Override
     public void onRefresh() {
-        mainActivityViewModel.resetPage();
-        getPhotos(queryString, true);
+        mainActivityViewModel.setQueryString(null);
     }
 
     private void showProgressBar() {
@@ -218,19 +214,19 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
         swipeContainer.setRefreshing(false);
     }
 
-    public void getPhotos(String query, Boolean resetList) {
+    public void getPhotos(Boolean resetList) {
         showProgressBar();
-        mainActivityViewModel.getFotos(query, resetList).observe(this, this);
+        mainActivityViewModel.getFotos(resetList).observe(this, this);
     }
 
     public void getMorePhotos() {
        mainActivityViewModel.addPage();
-       getPhotos(queryString, false);
+       getPhotos(false);
     }
 
     public void searchForPhotos() {
         showProgressBar();
-        mainActivityViewModel.getFotos(queryString, true).observe(this, this);
+        mainActivityViewModel.getFotos(true).observe(this, this);
     }
 }
 

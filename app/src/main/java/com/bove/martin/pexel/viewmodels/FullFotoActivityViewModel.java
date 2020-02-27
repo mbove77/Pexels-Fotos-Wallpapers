@@ -16,7 +16,6 @@ public class FullFotoActivityViewModel extends ViewModel {
         mHaveStorgePermission = new MutableLiveData<Boolean>();
     }
 
-
     public LiveData<Boolean> getHaveStoragePermission() {
         return mHaveStorgePermission;
     }

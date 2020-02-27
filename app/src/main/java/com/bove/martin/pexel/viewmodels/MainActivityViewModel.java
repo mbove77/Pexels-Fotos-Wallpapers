@@ -25,12 +25,10 @@ public class MainActivityViewModel extends ViewModel {
     private PopularSearchsRepository mPopularSearchRepo;
     private int pageNumber = 1;
 
-    public void init() {
-        if(mFotos != null) {
-            return;
-        }
+    public MainActivityViewModel(){
         mRepo = FotosRepository.getInstance();
         mPopularSearchRepo = PopularSearchsRepository.getInstance();
+        mFotos = new MutableLiveData<List<Foto>>();
         mQueryString = new MutableLiveData<String>();
     }
 
@@ -38,26 +36,15 @@ public class MainActivityViewModel extends ViewModel {
         pageNumber ++;
     }
 
-    public void resetPage() {
-        pageNumber = 1;
-        mQueryString.setValue(null);
-    }
+    private void resetList() { pageNumber = 1; }
 
-    public LiveData<List<Foto>> getFotos(String query, Boolean resetList) {
-        if(resetList) {
-          resetPage();
-        }
-        if(query == null) {
-            mFotos = mRepo.getFotos(null, pageNumber, resetList);
-        } else {
-            mFotos = mRepo.getFotos(query, pageNumber, resetList);
-        }
-        return mFotos;
+    public LiveData<List<Foto>> getFotos(Boolean resetList) {
+        if(resetList) { resetList(); }
+        return mFotos = mRepo.getFotos(mQueryString.getValue(), pageNumber, resetList);
     }
 
     public LiveData<List<Search>> getSearchs() {
-        mSearchs = mPopularSearchRepo.getSearchs();
-        return mSearchs;
+        return mSearchs = mPopularSearchRepo.getSearchs();
     }
 
     public void setQueryString(String query) {
