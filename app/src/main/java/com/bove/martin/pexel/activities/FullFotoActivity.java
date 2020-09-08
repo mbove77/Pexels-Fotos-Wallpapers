@@ -3,6 +3,8 @@ package com.bove.martin.pexel.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -19,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,12 +49,11 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 
-//TODO implement download action
-
-
 public class FullFotoActivity extends AppCompatActivity {
+    private static final String IMAGES_FOLDER_NAME = "TEMP_PEXEL_FOLDER";
     private String photoUrl;
     private String largePhotoUrl;
     private String photographerUrl;
@@ -68,6 +70,8 @@ public class FullFotoActivity extends AppCompatActivity {
     private LottieAnimationView succesAnim;
     private FullFotoActivityViewModel viewModel;
 
+    private boolean downloadForSharing = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +81,15 @@ public class FullFotoActivity extends AppCompatActivity {
         initVars();
         loadContentFormBundle();
 
-        viewModel.getHaveStoragePermission().observe(this, new Observer<Boolean>() {
+        viewModel.getStoragePermission().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(!aBoolean) {
-                    Toast.makeText(FullFotoActivity.this, R.string.permissionErrorStorage, Toast.LENGTH_LONG).show();
-                } else {
-                    donwloadFotoForSharing();
+                if(aBoolean != null) {
+                    if (!aBoolean) {
+                        Toast.makeText(FullFotoActivity.this, R.string.permissionErrorStorage, Toast.LENGTH_LONG).show();
+                    } else {
+                        donwloadFoto(downloadForSharing);
+                    }
                 }
             }
         });
@@ -232,23 +238,28 @@ public class FullFotoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.share_menu, menu);
-
-        MenuItem shareItem = menu.findItem(R.id.action_share);
-
-        shareItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                donwloadFotoForSharing();
-                return false;
-            }
-        });
-
         return true;
     }
 
-    private void donwloadFotoForSharing() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_share:
+                donwloadFoto(true);
+                return false;
+            case R.id.action_download:
+                donwloadFoto(false);
+                return false;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-        if(viewModel.getHaveStoragePermission().getValue() != null && viewModel.getHaveStoragePermission().getValue()) {
+
+    private void donwloadFoto(boolean isForSharing) {
+        downloadForSharing = isForSharing;
+
+        if(viewModel.getStoragePermission().getValue() != null && viewModel.getStoragePermission().getValue()) {
             showProgressBar();
 
             Glide.with(getApplicationContext())
@@ -262,7 +273,7 @@ public class FullFotoActivity extends AppCompatActivity {
 
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            shareBitmap(resource, "tempFilename") ;
+                            shareBitmap(resource, "tempFilename", downloadForSharing) ;
                             hideProgressBar();
                         }
 
@@ -284,54 +295,86 @@ public class FullFotoActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("SetWorldReadable")
-    private void shareBitmap (Bitmap bitmap, String fileName) {
+
+    private void shareBitmap (Bitmap bitmap, String fileName, boolean downloadForSharing) {
 
         try {
-            String fileExt = ".png";
-            File file = new File(Environment.getExternalStorageDirectory(), File.separator + fileName + fileExt);
-            FileOutputStream fOut = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fOut);
-            fOut.flush(); fOut.close();
-            file.setReadable(true, false);
+            Uri imageUri = saveImage(bitmap, fileName);
 
-            final Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("image/*");
-            Uri fileUri = FileProvider.getUriForFile(this, "com.bove.martin.pexel.provider", file);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            if(imageUri != null) {
+                final Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.putExtra(Intent.EXTRA_STREAM, imageUri);
 
-            if(Build.VERSION.SDK_INT>=24){
-                try{
-                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                    m.invoke(null);
-                }catch(Exception e){
-                    e.printStackTrace();
+                final Intent intentDown = new Intent(Intent.ACTION_VIEW);
+                intentDown.setType("image/*");
+                intentDown.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intentDown.putExtra(Intent.EXTRA_STREAM, imageUri);
+
+                if(downloadForSharing) {
+                    startActivity(intent);
+                } else {
+                    startActivity(intentDown);
                 }
             }
 
-            startActivity(intent);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
 
-    // TODO agregar el permiso de lectura.
+    private Uri saveImage(Bitmap bitmap, @NonNull String name) throws IOException {
+        boolean saved;
+        OutputStream fos;
+        Uri imageUri = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentResolver resolver = getContentResolver();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/" + IMAGES_FOLDER_NAME);
+            imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            fos = resolver.openOutputStream(imageUri);
+        } else {
+            String imagesDir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DCIM).toString() + File.separator + IMAGES_FOLDER_NAME;
+
+            File file = new File(imagesDir);
+
+            if (!file.exists()) {
+                file.mkdir();
+            }
+
+            File image = new File(imagesDir, name + ".jpg");
+            fos = new FileOutputStream(image);
+            imageUri =  FileProvider.getUriForFile(this, "com.bove.martin.pexel.provider", image);
+        }
+
+        saved = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        fos.flush();
+        fos.close();
+
+        return imageUri;
+    }
+
     private void checkStoragePermission() {
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new PermissionListener() {
                     @Override public void onPermissionGranted(PermissionGrantedResponse response) {
-                        viewModel.setHaveSoragePermission(true);
+                        viewModel.setSoragePermission(true);
                     }
                     @Override public void onPermissionDenied(PermissionDeniedResponse response) {
-                        viewModel.setHaveSoragePermission(false);
+                        viewModel.setSoragePermission(false);
                     }
                     @Override public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
                 }).check();
+
     }
 }
 

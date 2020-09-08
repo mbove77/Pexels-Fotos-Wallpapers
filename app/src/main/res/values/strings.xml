@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pexels Fotos Wallpapers</string>
     <string name="search">Buscar</string>
+    <string name="download">Descargar</string>
     <string name="share">Compartir</string>
     <string name="wallpaperChange">Wallpaper cambiado.</string>
     <string name="wallpaperLockError">Disculpa, tu dispositivo no soporta esta función.</string>
@@ -11,6 +12,6 @@
     <string name="no_results">No tenemos nada para mostrarte, prueba con otra búsqueda!</string>
     <string name="sad_face_desc">Sad Face</string>
     <string name="permissionError">Necesitamos el permiso de setear wallpapper para funcionar.</string>
-    <string name="permissionErrorStorage">Necesitamos el permiso de compartir la imagen.</string>
+    <string name="permissionErrorStorage">Necesitamos los permisos para compartir la imagen.</string>
     <string name="popular_searches">Búsquedas Populares</string>
 </resources>

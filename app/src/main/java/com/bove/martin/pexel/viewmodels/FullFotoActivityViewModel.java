@@ -16,11 +16,11 @@ public class FullFotoActivityViewModel extends ViewModel {
         mHaveStorgePermission = new MutableLiveData<Boolean>();
     }
 
-    public LiveData<Boolean> getHaveStoragePermission() {
+    public LiveData<Boolean> getStoragePermission() {
         return mHaveStorgePermission;
     }
 
-    public void setHaveSoragePermission(Boolean value) {
+    public void setSoragePermission(Boolean value) {
         mHaveStorgePermission.setValue(value);
     }
 

@@ -37,7 +37,8 @@ import java.util.List;
 
 //TODO implement voice search
 //TODO implement connection monitor
-//TODO ver que hacer cuando esta escrita una busqueda y se apreta en una categoria.
+//TODO ver que hacer cuando esta escrita una búsqueda y se apreté en una categoría.
+//TODO migrar a Kotlin + MVVM + Koin
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
