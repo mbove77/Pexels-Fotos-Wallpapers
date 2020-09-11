@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,8 +37,9 @@ import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 import java.util.List;
 
 //TODO implement voice search
+//TODO translate searches
 //TODO implement connection monitor
-//TODO ver que hacer cuando esta escrita una búsqueda y se apreté en una categoría.
+//TODO implementar navigation graph y transiciones
 //TODO migrar a Kotlin + MVVM + Koin
 
 public class MainActivity extends AppCompatActivity implements FotoAdapter.OnItemClickListener, Observer<List<Foto>>, SwipeRefreshLayout.OnRefreshListener {
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setTheme(R.style.AppTheme);
 
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
@@ -88,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
             } else {
                 searchAdapter = new SearchAdapter(searches, R.layout.recycler_view_search_item, (search, posicion) -> {
                    mainActivityViewModel.setQueryString(search.getSearchInEnglish());
+                    searchView.setIconified(true);
+                    searchView.onActionViewCollapsed();
                 });
                 recyclerViewSeaches.setAdapter(searchAdapter);
             }
@@ -144,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
     */
     @Override
     public void onChanged(List<Foto> fotos) {
-        if(fotos.size() > 0) {
+        if(fotos != null && fotos.size() > 0) {
             viewFlipper.setDisplayedChild(0);
             if (adapter == null) {
                 adapter = new FotoAdapter(fotos, R.layout.recycler_view_item, this);
@@ -184,6 +190,16 @@ public class MainActivity extends AppCompatActivity implements FotoAdapter.OnIte
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if (viewFlipper.getDisplayedChild() == 1) {
+                    mainActivityViewModel.setQueryString(null);
+                }
                 return false;
             }
         });

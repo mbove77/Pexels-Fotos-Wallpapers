@@ -11,7 +11,7 @@
     <string name="wallpaperButtonBlock">USAR COMO PANTALLA DE BLOQUEO</string>
     <string name="no_results">No tenemos nada para mostrarte, prueba con otra búsqueda!</string>
     <string name="sad_face_desc">Sad Face</string>
-    <string name="permissionError">Necesitamos el permiso de setear wallpapper para funcionar.</string>
+    <string name="permissionError">Necesitamos el permiso de setear wallpapers para funcionar.</string>
     <string name="permissionErrorStorage">Necesitamos los permisos para compartir la imagen.</string>
     <string name="popular_searches">Búsquedas Populares</string>
 </resources>

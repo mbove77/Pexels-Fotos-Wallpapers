@@ -50,6 +50,8 @@ public class FotosRepository {
                     }
                     tempFotos.addAll(response.body());
                     fotoData.setValue(tempFotos);
+                } else {
+                    fotoData.setValue(null);
                 }
             }
 
