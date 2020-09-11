@@ -7,7 +7,7 @@ package com.bove.martin.pexel.utils;
 public class AppConstants {
     public static final String BASE_URL = "https://api.pexels.com/v1/";
     public static final String PEXELS_URL = "https://www.pexels.com/";
-    public static final String PEXELS_TOKEN = "563492ad6f9170000100000141378ee0dc93445b8f529c2025e500d8";
+    public static final String PEXELS_TOKEN = "";
     public static final String PHOTO_URL = "large";
     public static final String LARGE_FOTO_URL = "large";
     public static final String PHOTOGRAPHER_NAME = "photographer_name";
