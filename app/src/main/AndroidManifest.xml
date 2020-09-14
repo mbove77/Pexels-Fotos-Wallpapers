@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.MainActivity"
+        <activity android:name=".presentation.MainActivity"
             android:theme="@style/SplashTheme"
             android:configChanges="screenSize|orientation">
             <intent-filter>
@@ -25,18 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.FullFotoActivity"></activity>
-
-
-        <provider
-            android:name=".utils.GenericFileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
+        <activity android:name=".presentation.FullFotoActivity"></activity>
     </application>
 
 </manifest>

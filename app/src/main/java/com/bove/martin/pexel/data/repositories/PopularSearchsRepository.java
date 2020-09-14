@@ -1,8 +1,8 @@
-package com.bove.martin.pexel.repositories;
+package com.bove.martin.pexel.data.repositories;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.bove.martin.pexel.model.Search;
+import com.bove.martin.pexel.data.model.Search;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

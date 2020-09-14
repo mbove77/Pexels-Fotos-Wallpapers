@@ -1,7 +1,6 @@
-package com.bove.martin.pexel.activities;
+package com.bove.martin.pexel.presentation;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -20,7 +19,6 @@ import androidx.lifecycle.ViewModelProviders;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +33,7 @@ import com.bove.martin.pexel.utils.AppConstants;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bove.martin.pexel.R;
-import com.bove.martin.pexel.viewmodels.FullFotoActivityViewModel;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -50,7 +48,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 
 public class FullFotoActivity extends AppCompatActivity {
     private static final String IMAGES_FOLDER_NAME = "TEMP_PEXEL_FOLDER";

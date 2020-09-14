@@ -1,5 +1,6 @@
-package com.bove.martin.pexel.services;
-import com.bove.martin.pexel.model.Foto;
+package com.bove.martin.pexel.data.retrofit;
+
+import com.bove.martin.pexel.data.model.Foto;
 import com.bove.martin.pexel.utils.ApiKey;
 
 import java.util.List;

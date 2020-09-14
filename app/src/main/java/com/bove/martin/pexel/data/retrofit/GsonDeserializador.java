@@ -1,6 +1,6 @@
-package com.bove.martin.pexel.utils;
+package com.bove.martin.pexel.data.retrofit;
 
-import com.bove.martin.pexel.model.Foto;
+import com.bove.martin.pexel.data.model.Foto;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

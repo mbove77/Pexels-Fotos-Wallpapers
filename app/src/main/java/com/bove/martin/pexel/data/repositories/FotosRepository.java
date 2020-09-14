@@ -1,10 +1,11 @@
-package com.bove.martin.pexel.repositories;
+package com.bove.martin.pexel.data.repositories;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.bove.martin.pexel.model.Foto;
-import com.bove.martin.pexel.services.PexelService;
-import com.bove.martin.pexel.services.RetrofitService;
+
+import com.bove.martin.pexel.data.model.Foto;
+import com.bove.martin.pexel.data.retrofit.PexelService;
+import com.bove.martin.pexel.data.retrofit.RetrofitService;
 import com.bove.martin.pexel.utils.AppConstants;
 
 import java.util.ArrayList;

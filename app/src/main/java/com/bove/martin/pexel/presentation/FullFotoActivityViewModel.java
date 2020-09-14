@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.viewmodels;
+package com.bove.martin.pexel.presentation;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

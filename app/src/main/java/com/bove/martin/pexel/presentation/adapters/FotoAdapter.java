@@ -13,7 +13,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 
 import com.bove.martin.pexel.R;
-import com.bove.martin.pexel.model.Foto;
+import com.bove.martin.pexel.data.model.Foto;
 import com.bumptech.glide.Glide;
 
 import java.util.List;

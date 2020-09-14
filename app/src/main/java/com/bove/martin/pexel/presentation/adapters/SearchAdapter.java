@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bove.martin.pexel.R;
-import com.bove.martin.pexel.model.Search;
+import com.bove.martin.pexel.data.model.Search;
 import com.bumptech.glide.Glide;
 
 import java.util.List;

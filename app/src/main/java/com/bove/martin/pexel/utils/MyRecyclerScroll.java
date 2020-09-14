@@ -3,8 +3,6 @@ package com.bove.martin.pexel.utils;
 import android.util.Log;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-
 /**
  * Created by Martín Bove on 13-Feb-20.
  * E-mail: mbove77@gmail.com

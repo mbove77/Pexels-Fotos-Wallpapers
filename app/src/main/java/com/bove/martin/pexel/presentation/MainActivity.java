@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.activities;
+package com.bove.martin.pexel.presentation;
 
 import android.content.Intent;
 
@@ -28,11 +28,11 @@ import android.widget.ViewFlipper;
 import com.bove.martin.pexel.R;
 import com.bove.martin.pexel.adapter.FotoAdapter;
 import com.bove.martin.pexel.adapter.SearchAdapter;
-import com.bove.martin.pexel.model.Foto;
+
+import com.bove.martin.pexel.data.model.Foto;
 import com.bove.martin.pexel.utils.AppConstants;
 import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener;
 import com.bove.martin.pexel.utils.MyRecyclerScroll;
-import com.bove.martin.pexel.viewmodels.MainActivityViewModel;
 
 import java.util.List;
 

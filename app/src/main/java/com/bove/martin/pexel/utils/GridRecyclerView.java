@@ -24,8 +24,7 @@ public class GridRecyclerView extends RecyclerView {
     public GridRecyclerView(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
 
     @Override
-    protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params,
-                                                   int index, int count) {
+    protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params, int index, int count) {
         final LayoutManager layoutManager = getLayoutManager();
         if (getAdapter() != null && layoutManager instanceof GridLayoutManager){
 

@@ -1,7 +1,6 @@
-package com.bove.martin.pexel.services;
+package com.bove.martin.pexel.data.retrofit;
 
-import com.bove.martin.pexel.model.Foto;
-import com.bove.martin.pexel.utils.GsonDeserializador;
+import com.bove.martin.pexel.data.model.Foto;
 import com.bove.martin.pexel.utils.AppConstants;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

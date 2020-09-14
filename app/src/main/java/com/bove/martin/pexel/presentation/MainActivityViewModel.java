@@ -1,13 +1,14 @@
-package com.bove.martin.pexel.viewmodels;
+package com.bove.martin.pexel.presentation;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.bove.martin.pexel.model.Foto;
-import com.bove.martin.pexel.model.Search;
-import com.bove.martin.pexel.repositories.FotosRepository;
-import com.bove.martin.pexel.repositories.PopularSearchsRepository;
+import com.bove.martin.pexel.data.model.Foto;
+import com.bove.martin.pexel.data.model.Search;
+import com.bove.martin.pexel.data.repositories.FotosRepository;
+import com.bove.martin.pexel.data.repositories.PopularSearchsRepository;
+
 
 import java.util.List;
 
