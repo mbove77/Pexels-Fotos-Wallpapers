@@ -21,7 +21,6 @@ object RetrofitModule {
     }
 
 
-
     private fun retrofit(): PexelService {
         return RetrofitService().createService(PexelService::class.java)
     }
