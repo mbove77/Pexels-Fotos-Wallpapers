@@ -12,4 +12,6 @@ object AppConstants {
     const val PHOTOGRAPHER_NAME = "photographer_name"
     const val PHOTOGRAPHER_URL = "photo_url"
     const val ITEM_NUMBER = 15
+    const val IMAGES_FOLDER_NAME = "TEMP_PEXEL_FOLDER"
+    const val DEFAULT_FILE_NAME = "pexelTempFile"
 }

@@ -32,6 +32,7 @@ import com.bove.martin.pexel.utils.MyRecyclerScroll
 //TODO implement connection monitor
 //TODO implementar navigation graph y transiciones
 //TODO migrar a Kotlin + MVVM + Koin
+//TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
 class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Observer<List<Foto?>?>, OnRefreshListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: StaggeredGridLayoutManager
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         swipeContainer.setOnRefreshListener(this)
 
         // load more items whew reach near the end of the list.
-        recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager!!) {
+        recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 morePhotos
             }
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         getPhotos(false)
 
         // searches observer
-        mainActivityViewModel.searchs.observe(this, Observer<List<Search>> { searches: List<Search> ->
+        mainActivityViewModel.searchs.observe(this, { searches: List<Search> ->
             if (searchAdapter != null) {
                 recyclerViewSeaches.adapter = searchAdapter
             } else {
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         })
 
         // queryString observer
-        mainActivityViewModel.queryString?.observe(this, Observer { s: String? -> searchForPhotos() })
+        mainActivityViewModel.queryString?.observe(this, { _: String? -> searchForPhotos() })
 
         // hide & show searches recycler based on scroll.
         searchLayout = findViewById(R.id.searchesLayout)
@@ -102,9 +103,9 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            layoutManager!!.spanCount = 3
+            layoutManager.spanCount = 3
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager!!.spanCount = 2
+            layoutManager.spanCount = 2
         }
     }
 
@@ -154,10 +155,10 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         inflater.inflate(R.menu.search_menu, menu)
         val searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
-        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (query != null && query !== mainActivityViewModel!!.queryString!!.value) {
-                    mainActivityViewModel!!.setQueryString(query)
+                if (query !== mainActivityViewModel.queryString!!.value) {
+                    mainActivityViewModel.setQueryString(query)
                 }
                 return false
             }
@@ -166,9 +167,9 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
                 return false
             }
         })
-        searchView!!.setOnCloseListener {
-            if (viewFlipper!!.displayedChild == 1) {
-                mainActivityViewModel!!.setQueryString(null)
+        searchView.setOnCloseListener {
+            if (viewFlipper.displayedChild == 1) {
+                mainActivityViewModel.setQueryString(null)
             }
             false
         }
@@ -186,51 +187,51 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
 
     // onRefresh SwipeContainer
     override fun onRefresh() {
-        mainActivityViewModel!!.setQueryString(null)
+        mainActivityViewModel.setQueryString(null)
     }
 
     private fun showProgressBar() {
-        swipeContainer!!.isRefreshing = true
+        swipeContainer.isRefreshing = true
     }
 
     private fun hideProgressBar() {
-        swipeContainer!!.isRefreshing = false
+        swipeContainer.isRefreshing = false
     }
 
-    fun getPhotos(resetList: Boolean?) {
+    private fun getPhotos(resetList: Boolean?) {
         showProgressBar()
-        mainActivityViewModel!!.getFotos(resetList!!).observe(this, this)
+        mainActivityViewModel.getFotos(resetList!!).observe(this, this)
     }
 
     val morePhotos: Unit
         get() {
-            mainActivityViewModel!!.addPage()
+            mainActivityViewModel.addPage()
             getPhotos(false)
         }
 
-    fun searchForPhotos() {
+    private fun searchForPhotos() {
         showProgressBar()
-        mainActivityViewModel!!.getFotos(true).observe(this, this)
+        mainActivityViewModel.getFotos(true).observe(this, this)
     }
 
     override fun onChanged(fotos: List<Foto?>?) {
-        if (fotos != null && fotos.size > 0) {
-            viewFlipper!!.displayedChild = 0
+        if (!fotos.isNullOrEmpty()) {
+            viewFlipper.displayedChild = 0
             if (adapter == null) {
                 adapter = FotoAdapter(fotos as List<Foto>, R.layout.recycler_view_item, this)
-                recyclerView!!.adapter = adapter
+                recyclerView.adapter = adapter
                 hideProgressBar()
             } else {
                 if (fotos.size > AppConstants.ITEM_NUMBER) {
                     adapter!!.notifyItemRangeInserted(fotos.size - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER)
                 } else {
                     adapter!!.notifyDataSetChanged()
-                    recyclerView!!.scrollToPosition(0)
+                    recyclerView.scrollToPosition(0)
                 }
                 hideProgressBar()
             }
         } else {
-            viewFlipper!!.displayedChild = 1
+            viewFlipper.displayedChild = 1
         }
     }
 }

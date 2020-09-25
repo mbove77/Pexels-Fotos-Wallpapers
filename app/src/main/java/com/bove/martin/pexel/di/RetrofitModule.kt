@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.data.di
+package com.bove.martin.pexel.di
 
 import com.bove.martin.pexel.data.retrofit.PexelService
 import com.bove.martin.pexel.data.retrofit.RetrofitService
