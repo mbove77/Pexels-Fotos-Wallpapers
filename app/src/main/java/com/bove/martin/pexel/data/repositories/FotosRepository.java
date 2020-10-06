@@ -19,6 +19,8 @@ import retrofit2.Response;
  * Created by Martín Bove on 01-Feb-20.
  * E-mail: mbove77@gmail.com
  */
+
+//TODO usar corrutinas
 public class FotosRepository {
     private static FotosRepository instance;
     private ArrayList<Foto> tempFotos = new ArrayList<>();

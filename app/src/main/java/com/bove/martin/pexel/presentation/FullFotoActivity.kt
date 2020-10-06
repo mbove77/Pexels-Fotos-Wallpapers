@@ -36,11 +36,10 @@ class FullFotoActivity : AppCompatActivity() {
 
         binding = ActivityFullFotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProviders.of(this).get(FullFotoActivityViewModel::class.java)
-
         loadContentFormBundle()
         viewModel = ViewModelProviders.of(this).get(FullFotoActivityViewModel::class.java)
+
+
         viewModel.haveStoragePermission.observe(this, { aBoolean ->
             if (aBoolean != null) {
                 if (!aBoolean) {
@@ -52,12 +51,15 @@ class FullFotoActivity : AppCompatActivity() {
         })
 
         binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
+
         binding.buttonSetWallPapperLock.setOnClickListener { setWallpaper(true) }
+
         binding.pexelLogo.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW)
             i.data = Uri.parse(AppConstants.PEXELS_URL)
             startActivity(i)
         }
+
         binding.textViewPhotgraperName.setOnClickListener {
             if (photoUrl != null) {
                 val i = Intent(Intent.ACTION_VIEW)
@@ -65,6 +67,7 @@ class FullFotoActivity : AppCompatActivity() {
                 startActivity(i)
             }
         }
+
         viewModel.operationResult.observe(this, { operationResult ->
             Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT).show()
             binding.buttonSetWallPapper.isEnabled = true
@@ -74,6 +77,7 @@ class FullFotoActivity : AppCompatActivity() {
                 showSuccessAnim()
             }
         })
+
         viewModel.savedFoto.observe(this, { uri ->
             hideProgressBar()
             shareBitmap(uri)
@@ -109,7 +113,7 @@ class FullFotoActivity : AppCompatActivity() {
     }
 
     private fun showSuccessAnim() {
-       binding.successAnimation.playAnimation()
+        binding.successAnimation.playAnimation()
     }
 
     private fun setWallpaper(isLockScreen: Boolean) {
@@ -135,7 +139,7 @@ class FullFotoActivity : AppCompatActivity() {
             intent.type = "image/*"
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.putExtra(Intent.EXTRA_STREAM, imageUri)
-            val intentDown = Intent(Intent.ACTION_VIEW)
+            val intentDown = Intent(Intent.ACTION_VIEW, imageUri)
             intentDown.type = "image/*"
             intentDown.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intentDown.putExtra(Intent.EXTRA_STREAM, imageUri)

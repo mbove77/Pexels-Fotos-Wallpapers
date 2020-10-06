@@ -4,6 +4,7 @@
     <string name="download">Descargar</string>
     <string name="share">Compartir</string>
     <string name="wallpaperChange">Wallpaper cambiado.</string>
+    <string name="fileDownload">Su foto se guardado con exito.</string>
     <string name="wallpaperLockError">Disculpa, tu dispositivo no soporta esta función.</string>
     <string name="loadImageError">Error al cargar la imagen.</string>
     <string name="connectionError">Fallo la conexión con el servidor.</string>

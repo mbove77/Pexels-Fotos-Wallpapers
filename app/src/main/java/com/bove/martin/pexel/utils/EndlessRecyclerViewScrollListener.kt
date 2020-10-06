@@ -37,7 +37,7 @@ abstract class EndlessRecyclerViewScrollListener : RecyclerView.OnScrollListener
     //    }
     constructor(layoutManager: StaggeredGridLayoutManager) {
         mLayoutManager = layoutManager
-        visibleThreshold = visibleThreshold * layoutManager.spanCount
+        visibleThreshold *= layoutManager.spanCount
     }
 
     fun getLastVisibleItem(lastVisibleItemPositions: IntArray): Int {
