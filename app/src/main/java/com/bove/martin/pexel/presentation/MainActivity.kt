@@ -33,13 +33,13 @@ import com.bove.martin.pexel.utils.MyRecyclerScroll
 //TODO implementar navigation graph y transiciones
 //TODO migrar a Kotlin + MVVM + Koin
 //TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
-class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Observer<List<Foto?>?>, OnRefreshListener {
+class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRefreshListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: StaggeredGridLayoutManager
     private var adapter: FotoAdapter? = null
     private lateinit var viewFlipper: ViewFlipper
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var mainActivityViewModel: MainActivityViewModel
+    private lateinit var viewModel: MainActivityViewModel
 
     private lateinit var recyclerViewSeaches: RecyclerView
     private lateinit var searchesLayoutManager: LinearLayoutManager
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setTheme(R.style.AppTheme)
-        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         initRecyclerView()
         initRecyclerViewSearch()
         viewFlipper = findViewById(R.id.mainViewFlipper)
@@ -61,21 +61,22 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         // load more items whew reach near the end of the list.
         recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                morePhotos
+                viewModel.getMoreFotos(false)
             }
         })
 
-        // initial load of the photos
+        // initial load of the photos and searches
         getPhotos(false)
+        viewModel.getSearchOptions()
 
         // searches observer
-        mainActivityViewModel.searchs.observe(this, { searches: List<Search> ->
+        viewModel.searches.observe(this, {
             if (searchAdapter != null) {
                 recyclerViewSeaches.adapter = searchAdapter
             } else {
-                searchAdapter = SearchAdapter(searches, R.layout.recycler_view_search_item, object : OnSearchItemClickListener {
+                searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item, object : OnSearchItemClickListener {
                     override fun onSearchSuggestItemClick(search: Search, posicion: Int) {
-                        mainActivityViewModel.setQueryString(search.searchInEnglish)
+                        viewModel.setQueryString(search.searchInEnglish)
                         searchView.isIconified = true
                         searchView.onActionViewCollapsed()
                     }
@@ -84,18 +85,41 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
             }
         })
 
+
+        // photos observer
+        viewModel.fotos.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                viewFlipper.displayedChild = 0
+                if (adapter == null) {
+                    adapter = FotoAdapter(it, R.layout.recycler_view_item, this)
+                    recyclerView.adapter = adapter
+                    hideProgressBar()
+                } else {
+                    if (it.size > AppConstants.ITEM_NUMBER) {
+                        adapter!!.notifyItemRangeInserted(it.size - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER)
+                    } else {
+                        adapter!!.notifyDataSetChanged()
+                        recyclerView.scrollToPosition(0)
+                    }
+                    hideProgressBar()
+                }
+            } else {
+                viewFlipper.displayedChild = 1
+            }
+        })
+
         // queryString observer
-        mainActivityViewModel.queryString?.observe(this, { _: String? -> searchForPhotos() })
+        viewModel.queryString.observe(this, { _: String? -> searchForPhotos() })
 
         // hide & show searches recycler based on scroll.
         searchLayout = findViewById(R.id.searchesLayout)
         recyclerView.addOnScrollListener(object : MyRecyclerScroll() {
             override fun show() {
-                searchLayout.setVisibility(View.VISIBLE)
+                searchLayout.visibility = View.VISIBLE
             }
 
             override fun hide() {
-                searchLayout.setVisibility(View.GONE)
+                searchLayout.visibility = View.GONE
             }
         })
     }
@@ -122,33 +146,6 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         recyclerViewSeaches.setItemAnimator(DefaultItemAnimator())
     }
 
-    /*
-    * Observer for data changes in Fotos list.
-    * DisplayChild 0 is the swipeLayout with recyclerView.
-    * DisplayChild 1 is no result layout.
-    */
-    /*
-    fun onChanged(fotos: List<Foto>) {
-        if (fotos != null && fotos.size > 0) {
-            viewFlipper!!.displayedChild = 0
-            if (adapter == null) {
-                adapter = FotoAdapter(fotos, R.layout.recycler_view_item, this)
-                recyclerView!!.adapter = adapter
-                hideProgressBar()
-            } else {
-                if (fotos.size > AppConstants.ITEM_NUMBER) {
-                    adapter!!.notifyItemRangeInserted(fotos.size - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER)
-                } else {
-                    adapter!!.notifyDataSetChanged()
-                    recyclerView!!.scrollToPosition(0)
-                }
-                hideProgressBar()
-            }
-        } else {
-            viewFlipper!!.displayedChild = 1
-        }
-    }*/
-
     // Search Menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
@@ -157,8 +154,8 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (query !== mainActivityViewModel.queryString!!.value) {
-                    mainActivityViewModel.setQueryString(query)
+                if (query !== viewModel.queryString.value) {
+                    viewModel.setQueryString(query)
                 }
                 return false
             }
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         })
         searchView.setOnCloseListener {
             if (viewFlipper.displayedChild == 1) {
-                mainActivityViewModel.setQueryString(null)
+                viewModel.setQueryString(null)
             }
             false
         }
@@ -187,7 +184,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
 
     // onRefresh SwipeContainer
     override fun onRefresh() {
-        mainActivityViewModel.setQueryString(null)
+        viewModel.setQueryString(null)
     }
 
     private fun showProgressBar() {
@@ -198,40 +195,13 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener, Obser
         swipeContainer.isRefreshing = false
     }
 
-    private fun getPhotos(resetList: Boolean?) {
+    private fun getPhotos(resetList: Boolean) {
         showProgressBar()
-        mainActivityViewModel.getFotos(resetList!!).observe(this, this)
+        viewModel.getFotos(resetList)
     }
-
-    val morePhotos: Unit
-        get() {
-            mainActivityViewModel.addPage()
-            getPhotos(false)
-        }
 
     private fun searchForPhotos() {
         showProgressBar()
-        mainActivityViewModel.getFotos(true).observe(this, this)
-    }
-
-    override fun onChanged(fotos: List<Foto?>?) {
-        if (!fotos.isNullOrEmpty()) {
-            viewFlipper.displayedChild = 0
-            if (adapter == null) {
-                adapter = FotoAdapter(fotos as List<Foto>, R.layout.recycler_view_item, this)
-                recyclerView.adapter = adapter
-                hideProgressBar()
-            } else {
-                if (fotos.size > AppConstants.ITEM_NUMBER) {
-                    adapter!!.notifyItemRangeInserted(fotos.size - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER)
-                } else {
-                    adapter!!.notifyDataSetChanged()
-                    recyclerView.scrollToPosition(0)
-                }
-                hideProgressBar()
-            }
-        } else {
-            viewFlipper.displayedChild = 1
-        }
+        viewModel.getFotos(true)
     }
 }
