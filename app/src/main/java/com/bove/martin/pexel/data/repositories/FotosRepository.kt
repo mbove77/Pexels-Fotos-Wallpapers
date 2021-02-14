@@ -14,8 +14,8 @@ import retrofit2.Response
  * E-mail: mbove77@gmail.com
  */
 // todo recibir el servicio por el constructor para usarlo con di
-class FotosRepository {
-    private val fotosApi: PexelService = RetrofitService().createService(PexelService::class.java)
+class FotosRepository(private val fotosApi: PexelService) {
+    //private val fotosApi: PexelService = RetrofitService().createService(PexelService::class.java)
     private val listFotos: MutableList<Foto> = arrayListOf()
 
     suspend fun getCuratedFotos(queryString: String?, pageNumber: Int, resetLit:Boolean): OperationResult {
@@ -35,8 +35,7 @@ class FotosRepository {
                 OperationResult(false, Resources.getSystem().getString(R.string.loadImageError), null)
             } else {
                 response.body()?.let {
-                    //this is a temporary fix to take the last 15 elements in the response.
-                    listFotos.addAll(it.takeLast(AppConstants.ITEM_NUMBER))
+                    listFotos.addAll(it)
                 }
                 OperationResult(true, null, listFotos)
             }

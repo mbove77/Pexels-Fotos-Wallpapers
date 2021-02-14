@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
  * Created by Martín Bove on 01-Feb-20.
  * E-mail: mbove77@gmail.com
  */
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel(private val mRepo: FotosRepository, private val mSearchRepo: PopularSearchesRepository) : ViewModel() {
     private val _fotos = MutableLiveData<List<Foto>>()
     val fotos: LiveData<List<Foto>> get() = _fotos
     
@@ -26,8 +26,6 @@ class MainActivityViewModel : ViewModel() {
     private val _searches = MutableLiveData<List<Search>>()
     val searches: LiveData<List<Search>> get() = _searches
 
-    private val mRepo = FotosRepository()
-    private val mSearchRepo = PopularSearchesRepository()
     private var pageNumber = 1
 
     // todo unir esta funcion con getFotos

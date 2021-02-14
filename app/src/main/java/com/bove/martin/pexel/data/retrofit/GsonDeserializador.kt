@@ -14,8 +14,10 @@ import java.util.*
  */
 class GsonDeserializador : JsonDeserializer<List<Foto>> {
     var fotos: MutableList<Foto> = ArrayList()
+
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): List<Foto> {
+        fotos.clear()
         val photos = json.asJsonObject["photos"].asJsonArray
         for (i in 0 until photos.size()) {
             val id = photos[i].asJsonObject["id"].asInt

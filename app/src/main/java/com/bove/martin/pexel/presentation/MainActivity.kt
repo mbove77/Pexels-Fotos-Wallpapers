@@ -26,6 +26,8 @@ import com.bove.martin.pexel.presentation.adapters.SearchAdapter.OnSearchItemCli
 import com.bove.martin.pexel.utils.AppConstants
 import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener
 import com.bove.martin.pexel.utils.MyRecyclerScroll
+import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 //TODO implement voice search
 //TODO translate searches
@@ -33,13 +35,15 @@ import com.bove.martin.pexel.utils.MyRecyclerScroll
 //TODO implementar navigation graph y transiciones
 //TODO migrar a Kotlin + MVVM + Koin
 //TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
+//TODO para hacer el scroll horizontal una vez seleccionada una foto, debemos pasar todos las pantallas a fragments asi usamos siempre la misma conexión de datos.
 class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRefreshListener {
+    private val viewModel: MainActivityViewModel by viewModel()
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: StaggeredGridLayoutManager
     private var adapter: FotoAdapter? = null
     private lateinit var viewFlipper: ViewFlipper
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var viewModel: MainActivityViewModel
 
     private lateinit var recyclerViewSeaches: RecyclerView
     private lateinit var searchesLayoutManager: LinearLayoutManager
@@ -51,7 +55,6 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setTheme(R.style.AppTheme)
-        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
         initRecyclerView()
         initRecyclerViewSearch()
         viewFlipper = findViewById(R.id.mainViewFlipper)
