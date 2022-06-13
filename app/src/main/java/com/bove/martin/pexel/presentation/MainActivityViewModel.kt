@@ -1,6 +1,5 @@
 package com.bove.martin.pexel.presentation
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +16,9 @@ import kotlinx.coroutines.withContext
  * E-mail: mbove77@gmail.com
  */
 class MainActivityViewModel(private val mRepo: FotosRepository, private val mSearchRepo: PopularSearchesRepository) : ViewModel() {
-    private val _fotos = MutableLiveData<List<Foto>>()
-    val fotos: LiveData<List<Foto>> get() = _fotos
-    
-    private val _queryString = MutableLiveData<String>()
-    val queryString: LiveData<String> get() = _queryString
-    
-    private val _searches = MutableLiveData<List<Search>>()
-    val searches: LiveData<List<Search>> get() = _searches
+    val fotos = MutableLiveData<List<Foto>>()
+    val queryString = MutableLiveData<String?>()
+    val searches = MutableLiveData<List<Search>>()
 
     private var pageNumber = 1
 
@@ -37,11 +31,11 @@ class MainActivityViewModel(private val mRepo: FotosRepository, private val mSea
     fun getFotos(resetList: Boolean) {
         if (resetList) {pageNumber = 1}
         viewModelScope.launch(Dispatchers.IO) {
-            val response = mRepo.getCuratedFotos(_queryString.value, pageNumber, resetList)
+            val response = mRepo.getCuratedFotos(queryString.value, pageNumber, resetList)
 
             if (response.operationResult) {
                 withContext(Dispatchers.Main) {
-                    _fotos.value = response.resultObject as List<Foto>
+                    fotos.postValue(response.resultObject as List<Foto>)
                 }
             }
         }
@@ -53,13 +47,13 @@ class MainActivityViewModel(private val mRepo: FotosRepository, private val mSea
 
             if (!response.isNullOrEmpty()) {
                 withContext(Dispatchers.Main) {
-                    _searches.value = response;
+                    searches.postValue(response)
                 }
             }
         }
     }
 
     fun setQueryString(value:String?) {
-        _queryString.value = value
+        queryString.postValue(value)
     }
 }

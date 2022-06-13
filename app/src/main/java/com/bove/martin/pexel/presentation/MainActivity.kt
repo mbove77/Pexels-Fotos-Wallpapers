@@ -10,7 +10,6 @@ import android.widget.ViewFlipper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +25,6 @@ import com.bove.martin.pexel.presentation.adapters.SearchAdapter.OnSearchItemCli
 import com.bove.martin.pexel.utils.AppConstants
 import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener
 import com.bove.martin.pexel.utils.MyRecyclerScroll
-import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 //TODO implement voice search
@@ -45,7 +43,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
     private lateinit var viewFlipper: ViewFlipper
     private lateinit var swipeContainer: SwipeRefreshLayout
 
-    private lateinit var recyclerViewSeaches: RecyclerView
+    private lateinit var recyclerViewSearches: RecyclerView
     private lateinit var searchesLayoutManager: LinearLayoutManager
     private var searchAdapter: SearchAdapter? = null
     private lateinit var searchLayout: LinearLayout
@@ -73,20 +71,21 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         viewModel.getSearchOptions()
 
         // searches observer
-        viewModel.searches.observe(this, {
+        viewModel.searches.observe(this) {
             if (searchAdapter != null) {
-                recyclerViewSeaches.adapter = searchAdapter
+                recyclerViewSearches.adapter = searchAdapter
             } else {
-                searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item, object : OnSearchItemClickListener {
-                    override fun onSearchSuggestItemClick(search: Search, posicion: Int) {
-                        viewModel.setQueryString(search.searchInEnglish)
-                        searchView.isIconified = true
-                        searchView.onActionViewCollapsed()
-                    }
-                })
-                recyclerViewSeaches.adapter = searchAdapter
+                searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item,
+                    object : OnSearchItemClickListener {
+                        override fun onSearchSuggestItemClick(search: Search, posicion: Int) {
+                            viewModel.setQueryString(search.searchInEnglish)
+                            searchView.isIconified = true
+                            searchView.onActionViewCollapsed()
+                        }
+                    })
+                recyclerViewSearches.adapter = searchAdapter
             }
-        })
+        }
 
 
         // photos observer
@@ -143,10 +142,10 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
     }
 
     private fun initRecyclerViewSearch() {
-        recyclerViewSeaches = findViewById(R.id.recyclerViewSearchs)
+        recyclerViewSearches = findViewById(R.id.recyclerViewSearchs)
         searchesLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        recyclerViewSeaches.setLayoutManager(searchesLayoutManager)
-        recyclerViewSeaches.setItemAnimator(DefaultItemAnimator())
+        recyclerViewSearches.setLayoutManager(searchesLayoutManager)
+        recyclerViewSearches.setItemAnimator(DefaultItemAnimator())
     }
 
     // Search Menu

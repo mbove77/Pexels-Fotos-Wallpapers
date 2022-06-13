@@ -37,7 +37,7 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
         return fotos.size
     }
 
-    fun animate(hold: ViewHolder, down: Boolean) {
+    private fun animate(hold: ViewHolder, down: Boolean) {
         val animator: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", -100f, 0f)
         animator.interpolator = OvershootInterpolator()
         val animator1: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", 100f, 0f)

@@ -8,8 +8,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.databinding.ActivityFullFotoBinding
 import com.bove.martin.pexel.utils.AppConstants
@@ -28,7 +28,7 @@ class FullFotoActivity : AppCompatActivity() {
     private var photographerUrl: String? = null
     private var downloadForSharing = false
 
-    private lateinit var viewModel: FullFotoActivityViewModel
+    private val viewModel by viewModels<FullFotoActivityViewModel>()
     private lateinit var binding: ActivityFullFotoBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +37,21 @@ class FullFotoActivity : AppCompatActivity() {
         binding = ActivityFullFotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         loadContentFormBundle()
-        viewModel = ViewModelProviders.of(this).get(FullFotoActivityViewModel::class.java)
 
 
-        viewModel.haveStoragePermission.observe(this, { aBoolean ->
+        viewModel.haveStoragePermission.observe(this) { aBoolean ->
             if (aBoolean != null) {
                 if (!aBoolean) {
-                    Toast.makeText(this@FullFotoActivity, R.string.permissionErrorStorage, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@FullFotoActivity,
+                        R.string.permissionErrorStorage,
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     downloadFoto(downloadForSharing)
                 }
             }
-        })
+        }
 
         binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
 
@@ -68,20 +71,21 @@ class FullFotoActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.operationResult.observe(this, { operationResult ->
-            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT).show()
+        viewModel.operationResult.observe(this) { operationResult ->
+            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT)
+                .show()
             binding.buttonSetWallPapper.isEnabled = true
             binding.buttonSetWallPapperLock.isEnabled = true
             hideProgressBar()
             if (operationResult.operationResult) {
                 showSuccessAnim()
             }
-        })
+        }
 
-        viewModel.savedFoto.observe(this, { uri ->
+        viewModel.savedFoto.observe(this) { uri ->
             hideProgressBar()
             shareBitmap(uri)
-        })
+        }
     }
 
 

@@ -25,18 +25,13 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
     private val wallpaper = WallpaperOperations()
     private val context = getApplication<Application>().applicationContext
 
-    private val _haveStoragePermission = MutableLiveData<Boolean>()
-    val haveStoragePermission: LiveData<Boolean> get() = _haveStoragePermission
+    val haveStoragePermission = MutableLiveData<Boolean>()
+    val operationResult = MutableLiveData<OperationResult>()
+    val savedFoto = MutableLiveData<Uri>()
 
     fun setStoragePermission(value: Boolean) {
-        _haveStoragePermission.value = value
+        haveStoragePermission.postValue(value)
     }
-
-    private val _operationResult = MutableLiveData<OperationResult>()
-    val operationResult: LiveData<OperationResult> get() = _operationResult
-
-    private val _savedFoto = MutableLiveData<Uri>()
-    val savedFoto: LiveData<Uri> get() = _savedFoto
 
     fun setWallpaper(url: String, isLockScreen: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -44,7 +39,7 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
             val resultOperation =  wallpaper.setWallpaper(bitmap, isLockScreen, context)
 
             withContext(Dispatchers.Main) {
-                _operationResult.value = resultOperation
+                operationResult.postValue(resultOperation)
             }
         }
     }
@@ -56,9 +51,9 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
 
             withContext(Dispatchers.Main) {
                if (resultOperation.operationResult ) {
-                   _savedFoto.value = resultOperation.resultObject as Uri
+                   savedFoto.postValue(resultOperation.resultObject as Uri)
                } else {
-                   _operationResult.value = resultOperation
+                   operationResult.postValue(resultOperation)
                }
             }
         }
