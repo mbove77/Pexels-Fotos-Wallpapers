@@ -5,27 +5,25 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.ViewFlipper
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.data.model.Foto
 import com.bove.martin.pexel.data.model.Search
+import com.bove.martin.pexel.databinding.ActivityMainBinding
 import com.bove.martin.pexel.presentation.adapters.FotoAdapter
 import com.bove.martin.pexel.presentation.adapters.SearchAdapter
 import com.bove.martin.pexel.presentation.adapters.SearchAdapter.OnSearchItemClickListener
 import com.bove.martin.pexel.utils.AppConstants
 import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener
 import com.bove.martin.pexel.utils.MyRecyclerScroll
-import org.koin.android.viewmodel.ext.android.viewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 //TODO implement voice search
 //TODO translate searches
@@ -34,33 +32,30 @@ import org.koin.android.viewmodel.ext.android.viewModel
 //TODO migrar a Kotlin + MVVM + Koin
 //TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
 //TODO para hacer el scroll horizontal una vez seleccionada una foto, debemos pasar todos las pantallas a fragments asi usamos siempre la misma conexión de datos.
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRefreshListener {
-    private val viewModel: MainActivityViewModel by viewModel()
+    private val viewModel by viewModels<MainActivityViewModel>()
+    private lateinit var binding: ActivityMainBinding
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: StaggeredGridLayoutManager
-    private var adapter: FotoAdapter? = null
-    private lateinit var viewFlipper: ViewFlipper
-    private lateinit var swipeContainer: SwipeRefreshLayout
-
-    private lateinit var recyclerViewSearches: RecyclerView
     private lateinit var searchesLayoutManager: LinearLayoutManager
+    private var fotoAdapter: FotoAdapter? = null
     private var searchAdapter: SearchAdapter? = null
-    private lateinit var searchLayout: LinearLayout
+
     private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setTheme(R.style.AppTheme)
         initRecyclerView()
         initRecyclerViewSearch()
-        viewFlipper = findViewById(R.id.mainViewFlipper)
-        swipeContainer = findViewById(R.id.swipeContainer)
-        swipeContainer.setOnRefreshListener(this)
+        binding.swipeContainer.setOnRefreshListener(this)
 
         // load more items whew reach near the end of the list.
-        recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager) {
+        binding.recyclerViewFotos.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 viewModel.getMoreFotos(false)
             }
@@ -73,7 +68,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         // searches observer
         viewModel.searches.observe(this) {
             if (searchAdapter != null) {
-                recyclerViewSearches.adapter = searchAdapter
+                binding.recyclerViewSearchs.adapter = searchAdapter
             } else {
                 searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item,
                     object : OnSearchItemClickListener {
@@ -83,45 +78,47 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
                             searchView.onActionViewCollapsed()
                         }
                     })
-                recyclerViewSearches.adapter = searchAdapter
+                binding.recyclerViewSearchs.adapter = searchAdapter
             }
         }
 
 
         // photos observer
-        viewModel.fotos.observe(this, Observer {
+        viewModel.fotos.observe(this) {
             if (!it.isNullOrEmpty()) {
-                viewFlipper.displayedChild = 0
-                if (adapter == null) {
-                    adapter = FotoAdapter(it, R.layout.recycler_view_item, this)
-                    recyclerView.adapter = adapter
+                binding.mainViewFlipper.displayedChild = 0
+                if (fotoAdapter == null) {
+                    fotoAdapter = FotoAdapter(it, R.layout.recycler_view_item, this)
+                    binding.recyclerViewFotos.adapter = fotoAdapter
                     hideProgressBar()
                 } else {
                     if (it.size > AppConstants.ITEM_NUMBER) {
-                        adapter!!.notifyItemRangeInserted(it.size - AppConstants.ITEM_NUMBER, AppConstants.ITEM_NUMBER)
+                        fotoAdapter!!.notifyItemRangeInserted(
+                            it.size - AppConstants.ITEM_NUMBER,
+                            AppConstants.ITEM_NUMBER
+                        )
                     } else {
-                        adapter!!.notifyDataSetChanged()
-                        recyclerView.scrollToPosition(0)
+                        fotoAdapter!!.notifyDataSetChanged()
+                        binding.recyclerViewFotos.scrollToPosition(0)
                     }
                     hideProgressBar()
                 }
             } else {
-                viewFlipper.displayedChild = 1
+                binding.mainViewFlipper.displayedChild = 1
             }
-        })
+        }
 
         // queryString observer
-        viewModel.queryString.observe(this, { _: String? -> searchForPhotos() })
+        viewModel.queryString.observe(this) { searchForPhotos() }
 
         // hide & show searches recycler based on scroll.
-        searchLayout = findViewById(R.id.searchesLayout)
-        recyclerView.addOnScrollListener(object : MyRecyclerScroll() {
+        binding.recyclerViewFotos.addOnScrollListener(object : MyRecyclerScroll() {
             override fun show() {
-                searchLayout.visibility = View.VISIBLE
+                binding.searchesLayout.visibility = View.VISIBLE
             }
 
             override fun hide() {
-                searchLayout.visibility = View.GONE
+                binding.searchesLayout.visibility = View.GONE
             }
         })
     }
@@ -136,16 +133,14 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
     }
 
     private fun initRecyclerView() {
-        recyclerView = findViewById(R.id.recyclerViewFotos)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView.setLayoutManager(layoutManager)
+        binding.recyclerViewFotos.layoutManager = layoutManager
     }
 
     private fun initRecyclerViewSearch() {
-        recyclerViewSearches = findViewById(R.id.recyclerViewSearchs)
         searchesLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        recyclerViewSearches.setLayoutManager(searchesLayoutManager)
-        recyclerViewSearches.setItemAnimator(DefaultItemAnimator())
+        binding.recyclerViewSearchs.layoutManager = searchesLayoutManager
+        binding.recyclerViewSearchs.itemAnimator = DefaultItemAnimator()
     }
 
     // Search Menu
@@ -167,7 +162,7 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
             }
         })
         searchView.setOnCloseListener {
-            if (viewFlipper.displayedChild == 1) {
+            if (binding.mainViewFlipper.displayedChild == 1) {
                 viewModel.setQueryString(null)
             }
             false
@@ -190,11 +185,11 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
     }
 
     private fun showProgressBar() {
-        swipeContainer.isRefreshing = true
+        binding.swipeContainer.isRefreshing = true
     }
 
     private fun hideProgressBar() {
-        swipeContainer.isRefreshing = false
+        binding.swipeContainer.isRefreshing = false
     }
 
     private fun getPhotos(resetList: Boolean) {

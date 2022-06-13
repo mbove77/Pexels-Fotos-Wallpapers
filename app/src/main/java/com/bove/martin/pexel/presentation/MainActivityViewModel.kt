@@ -7,15 +7,19 @@ import com.bove.martin.pexel.data.model.Foto
 import com.bove.martin.pexel.data.model.Search
 import com.bove.martin.pexel.data.repositories.FotosRepository
 import com.bove.martin.pexel.data.repositories.PopularSearchesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 01-Feb-20.
  * E-mail: mbove77@gmail.com
  */
-class MainActivityViewModel(private val mRepo: FotosRepository, private val mSearchRepo: PopularSearchesRepository) : ViewModel() {
+
+@HiltViewModel
+class MainActivityViewModel @Inject constructor(private val photoRepository: FotosRepository, private val popularSearchesRepository: PopularSearchesRepository) : ViewModel() {
     val fotos = MutableLiveData<List<Foto>>()
     val queryString = MutableLiveData<String?>()
     val searches = MutableLiveData<List<Search>>()
@@ -31,7 +35,7 @@ class MainActivityViewModel(private val mRepo: FotosRepository, private val mSea
     fun getFotos(resetList: Boolean) {
         if (resetList) {pageNumber = 1}
         viewModelScope.launch(Dispatchers.IO) {
-            val response = mRepo.getCuratedFotos(queryString.value, pageNumber, resetList)
+            val response = photoRepository.getCuratedFotos(queryString.value, pageNumber, resetList)
 
             if (response.operationResult) {
                 withContext(Dispatchers.Main) {
@@ -43,7 +47,7 @@ class MainActivityViewModel(private val mRepo: FotosRepository, private val mSea
 
     fun getSearchOptions() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = mSearchRepo.searches
+            val response = popularSearchesRepository.searches
 
             if (!response.isNullOrEmpty()) {
                 withContext(Dispatchers.Main) {

@@ -5,17 +5,16 @@ import com.bove.martin.pexel.R
 import com.bove.martin.pexel.data.model.Foto
 import com.bove.martin.pexel.data.model.OperationResult
 import com.bove.martin.pexel.data.retrofit.PexelService
-import com.bove.martin.pexel.data.retrofit.RetrofitService
 import com.bove.martin.pexel.utils.AppConstants
 import retrofit2.Response
+import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 01-Feb-20.
  * E-mail: mbove77@gmail.com
  */
-// todo recibir el servicio por el constructor para usarlo con di
-class FotosRepository(private val fotosApi: PexelService) {
-    //private val fotosApi: PexelService = RetrofitService().createService(PexelService::class.java)
+
+class FotosRepository @Inject constructor(private val fotosApi: PexelService) {
     private val listFotos: MutableList<Foto> = arrayListOf()
 
     suspend fun getCuratedFotos(queryString: String?, pageNumber: Int, resetLit:Boolean): OperationResult {
