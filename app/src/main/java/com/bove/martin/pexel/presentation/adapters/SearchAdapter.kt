@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.Search
+import com.bove.martin.pexel.domain.model.Search
 import com.bumptech.glide.Glide
 
 /**
@@ -38,18 +38,12 @@ class SearchAdapter(private val searches: List<Search>, private val layout: Int,
         fun bind(search: Search, listener: OnSearchItemClickListener) {
 
             // if photo is null is the curated especial item
-            if (search.photo != null) {
-                Glide.with(itemView)
-                        .load(search.photo)
-                        .placeholder(R.drawable.placeholder)
-                        .into(imageViewFoto)
-            } else {
-                Glide.with(itemView)
-                        .load(R.drawable.curated)
-                        .into(imageViewFoto)
-            }
+            Glide.with(itemView)
+                    .load(search.photo)
+                    .placeholder(R.drawable.placeholder)
+                    .into(imageViewFoto)
             searchTerm.text = search.searchInSpanish
-            itemView.setOnClickListener { listener.onSearchSuggestItemClick(search, adapterPosition) }
+            itemView.setOnClickListener { listener.onSearchSuggestItemClick(search, bindingAdapterPosition) }
         }
 
         init {

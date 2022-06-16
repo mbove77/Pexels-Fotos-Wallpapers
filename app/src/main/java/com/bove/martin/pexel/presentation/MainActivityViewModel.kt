@@ -3,8 +3,8 @@ package com.bove.martin.pexel.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bove.martin.pexel.data.model.Foto
-import com.bove.martin.pexel.data.model.Search
+import com.bove.martin.pexel.domain.model.Foto
+import com.bove.martin.pexel.domain.model.Search
 import com.bove.martin.pexel.domain.GetFotosUseCase
 import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +36,7 @@ class MainActivityViewModel @Inject constructor(
         getFotos(resetList)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun getFotos(resetList: Boolean) {
         if (resetList) {pageNumber = 1}
         viewModelScope.launch {
@@ -53,7 +54,7 @@ class MainActivityViewModel @Inject constructor(
         viewModelScope.launch {
             val response = getPopularSearchesUseCase()
 
-            if (!response.isNullOrEmpty()) {
+            if (response.isNotEmpty()) {
                 withContext(Dispatchers.Main) {
                     searches.postValue(response)
                 }

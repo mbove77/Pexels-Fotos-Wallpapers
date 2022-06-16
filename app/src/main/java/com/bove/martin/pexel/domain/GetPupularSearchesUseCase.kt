@@ -1,6 +1,6 @@
 package com.bove.martin.pexel.domain
 
-import com.bove.martin.pexel.data.repositories.PopularSearchesRepository
+import com.bove.martin.pexel.data.database.PopularSearchesRepository
 import javax.inject.Inject
 
 /**

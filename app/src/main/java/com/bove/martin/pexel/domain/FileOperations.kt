@@ -9,7 +9,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.OperationResult
+import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.utils.AppConstants.IMAGES_FOLDER_NAME
 import java.io.File
 import java.io.FileOutputStream

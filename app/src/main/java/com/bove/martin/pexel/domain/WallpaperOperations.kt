@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.OperationResult
+import com.bove.martin.pexel.domain.model.OperationResult
 import java.io.IOException
 
 /**

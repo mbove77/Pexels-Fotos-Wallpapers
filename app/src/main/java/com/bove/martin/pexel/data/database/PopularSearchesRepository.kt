@@ -1,16 +1,23 @@
-package com.bove.martin.pexel.data.repositories
+package com.bove.martin.pexel.data.database
 
-import com.bove.martin.pexel.data.model.Search
+import com.bove.martin.pexel.data.database.dao.SearchesDao
+import com.bove.martin.pexel.data.database.entities.toDatabase
+import com.bove.martin.pexel.domain.model.Search
+import com.bove.martin.pexel.domain.model.toModel
 import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 12-Feb-20.
  * E-mail: mbove77@gmail.com
  */
-class PopularSearchesRepository @Inject constructor() {
+class PopularSearchesRepository @Inject constructor(private  val searchesDao: SearchesDao) {
 
-    public fun getAllSearches(): List<Search> {
-        val randomOrderSearch = populateSearchList()
+    //TODO Tratar de obviar la llamada al count
+    suspend fun getAllSearches(): List<Search> {
+        if (searchesDao.getSearchesCount() <= 0) {
+            searchesDao.insertAll(populateSearchList().map { it.toDatabase() })
+        }
+        val randomOrderSearch = searchesDao.getAll().map { it.toModel() }
         return randomOrderSearch.shuffled()
     }
 

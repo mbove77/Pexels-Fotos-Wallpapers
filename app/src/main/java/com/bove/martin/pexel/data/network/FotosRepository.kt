@@ -1,10 +1,10 @@
-package com.bove.martin.pexel.data.repositories
+package com.bove.martin.pexel.data.network
 
 import android.content.res.Resources
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.Foto
-import com.bove.martin.pexel.data.model.OperationResult
-import com.bove.martin.pexel.data.retrofit.PexelService
+import com.bove.martin.pexel.domain.model.Foto
+import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.data.network.retrofit.PexelService
 import com.bove.martin.pexel.utils.AppConstants
 import retrofit2.Response
 import javax.inject.Inject

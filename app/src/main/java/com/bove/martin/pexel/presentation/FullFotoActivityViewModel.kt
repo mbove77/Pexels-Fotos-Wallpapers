@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.bove.martin.pexel.data.model.OperationResult
+import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.FileOperations
 import com.bove.martin.pexel.domain.WallpaperOperations
 import com.bove.martin.pexel.utils.UriToBitmap
@@ -21,7 +21,6 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
     private val uriToBitmap = UriToBitmap()
     private val filesOperations = FileOperations()
     private val wallpaper = WallpaperOperations()
-    private val context = getApplication<Application>().applicationContext
 
     val haveStoragePermission = MutableLiveData<Boolean>()
     val operationResult = MutableLiveData<OperationResult>()
@@ -33,8 +32,8 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
 
     fun setWallpaper(url: String, isLockScreen: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = uriToBitmap.getBitmap(url, context)
-            val resultOperation =  wallpaper.setWallpaper(bitmap, isLockScreen, context)
+            val bitmap = uriToBitmap.getBitmap(url, getApplication<Application>().applicationContext)
+            val resultOperation =  wallpaper.setWallpaper(bitmap, isLockScreen, getApplication<Application>().applicationContext)
 
             withContext(Dispatchers.Main) {
                 operationResult.postValue(resultOperation)
@@ -44,8 +43,8 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
 
     fun downloadFoto(fotoUrl:String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = uriToBitmap.getBitmap(fotoUrl, context)
-            val resultOperation = filesOperations.saveImage(context, bitmap)
+            val bitmap = uriToBitmap.getBitmap(fotoUrl, getApplication<Application>().applicationContext)
+            val resultOperation = filesOperations.saveImage(getApplication<Application>().applicationContext, bitmap)
 
             withContext(Dispatchers.Main) {
                if (resultOperation.operationResult ) {

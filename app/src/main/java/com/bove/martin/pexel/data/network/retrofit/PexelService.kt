@@ -1,8 +1,7 @@
-package com.bove.martin.pexel.data.retrofit
+package com.bove.martin.pexel.data.network.retrofit
 
-import com.bove.martin.pexel.data.model.Foto
+import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.utils.ApiKey
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
