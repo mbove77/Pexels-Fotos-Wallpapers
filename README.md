@@ -1,5 +1,5 @@
 # Pexels-Fotos-Wallpapers
-Esta aplicación te pone a la mano todas las fotografías de libre uso que brinda la web pexels.com para que las puedas usar como fondo de pantalla o como quieras en tu dispositivo.
+Esta aplicación te pone a la mano todas las fotografías de libre uso que brinda la web **"https://www.pexels.com"** para que las puedas usar como fondo de pantalla o como quieras en tu dispositivo.
 
 ## Tecnologías bajo el capot
 Esta app está construida siguiendo los lineamientos de **"Clean Architecture"** usando el patrón de diseño **MVVM**.\
