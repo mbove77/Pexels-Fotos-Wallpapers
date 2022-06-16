@@ -10,8 +10,7 @@
 
         <item name="android:forceDarkAllowed" tools:targetApi="q">true</item>
     </style>
-
-
+    
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">
             @drawable/splashscreen
