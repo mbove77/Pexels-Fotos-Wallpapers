@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bove.martin.pexel.data.model.Foto
 import com.bove.martin.pexel.data.model.Search
-import com.bove.martin.pexel.data.repositories.FotosRepository
-import com.bove.martin.pexel.data.repositories.PopularSearchesRepository
+import com.bove.martin.pexel.domain.GetFotosUseCase
+import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +19,11 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val photoRepository: FotosRepository, private val popularSearchesRepository: PopularSearchesRepository) : ViewModel() {
+class MainActivityViewModel @Inject constructor(
+    private val getFotosUseCase: GetFotosUseCase,
+    private val getPopularSearchesUseCase: GetPupularSearchesUseCase
+    ) : ViewModel() {
+
     val fotos = MutableLiveData<List<Foto>>()
     val queryString = MutableLiveData<String?>()
     val searches = MutableLiveData<List<Search>>()
@@ -34,8 +38,8 @@ class MainActivityViewModel @Inject constructor(private val photoRepository: Fot
 
     fun getFotos(resetList: Boolean) {
         if (resetList) {pageNumber = 1}
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = photoRepository.getCuratedFotos(queryString.value, pageNumber, resetList)
+        viewModelScope.launch {
+            val response = getFotosUseCase(queryString.value, pageNumber, resetList)
 
             if (response.operationResult) {
                 withContext(Dispatchers.Main) {
@@ -46,8 +50,8 @@ class MainActivityViewModel @Inject constructor(private val photoRepository: Fot
     }
 
     fun getSearchOptions() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = popularSearchesRepository.searches
+        viewModelScope.launch {
+            val response = getPopularSearchesUseCase()
 
             if (!response.isNullOrEmpty()) {
                 withContext(Dispatchers.Main) {

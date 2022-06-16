@@ -9,11 +9,10 @@ import javax.inject.Inject
  */
 class PopularSearchesRepository @Inject constructor() {
 
-    val searches: List<Search>
-        get() {
-            val randomOrderSearch = populateSearchList()
-            return randomOrderSearch.shuffled()
-        }
+    public fun getAllSearches(): List<Search> {
+        val randomOrderSearch = populateSearchList()
+        return randomOrderSearch.shuffled()
+    }
 
     private fun populateSearchList(): List<Search> {
         return listOf(

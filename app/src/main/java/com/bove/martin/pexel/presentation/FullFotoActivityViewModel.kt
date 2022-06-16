@@ -3,13 +3,11 @@ package com.bove.martin.pexel.presentation
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.bove.martin.pexel.data.model.OperationResult
-import com.bove.martin.pexel.domain.WallpaperOperations
 import com.bove.martin.pexel.domain.FileOperations
-
+import com.bove.martin.pexel.domain.WallpaperOperations
 import com.bove.martin.pexel.utils.UriToBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
