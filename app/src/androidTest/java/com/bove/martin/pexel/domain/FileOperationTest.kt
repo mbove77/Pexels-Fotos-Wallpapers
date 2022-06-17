@@ -5,10 +5,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.core.net.toFile
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bove.martin.pexel.R
+import com.bove.martin.pexel.domain.operations.FileOperations
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -29,7 +29,7 @@ class FileOperationsTest {
     @Before
     fun setup() {
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        testBmp= BitmapFactory.decodeResource(appContext.resources, R.drawable.pexels);
+        testBmp= BitmapFactory.decodeResource(appContext.resources, R.drawable.pexels)
     }
 
     @Test
@@ -66,8 +66,8 @@ class FileOperationsTest {
 
     @After
     fun after() {
-        val imagefile = File(resultUri.toString());
-        imagefile?.let { imagefile.delete() }
+        val imagefile = File(resultUri.toString())
+        imagefile.let { imagefile.delete() }
     }
 
 }

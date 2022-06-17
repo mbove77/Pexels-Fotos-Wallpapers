@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.operations
 
 import android.content.ContentValues
 import android.content.Context
@@ -16,13 +16,13 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 24-Sep-20.
  * E-mail: mbove77@gmail.com
  */
-class FileOperations {
-
+class FileOperations @Inject constructor() {
     fun saveImage(context: Context, bitmap: Bitmap?): OperationResult {
         val fos: OutputStream?
         var imageUri: Uri? = null
