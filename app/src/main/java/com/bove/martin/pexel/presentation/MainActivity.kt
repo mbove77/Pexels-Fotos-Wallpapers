@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.Foto
-import com.bove.martin.pexel.data.model.Search
+import com.bove.martin.pexel.domain.model.Foto
+import com.bove.martin.pexel.domain.model.Search
 import com.bove.martin.pexel.databinding.ActivityMainBinding
 import com.bove.martin.pexel.presentation.adapters.FotoAdapter
 import com.bove.martin.pexel.presentation.adapters.SearchAdapter
@@ -29,7 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint
 //TODO translate searches
 //TODO implement connection monitor
 //TODO implementar navigation graph y transiciones
-//TODO migrar a Kotlin + MVVM + Koin
 //TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
 //TODO para hacer el scroll horizontal una vez seleccionada una foto, debemos pasar todos las pantallas a fragments asi usamos siempre la misma conexión de datos.
 

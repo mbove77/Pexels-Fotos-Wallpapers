@@ -10,7 +10,7 @@ import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.Foto
+import com.bove.martin.pexel.domain.model.Foto
 import com.bumptech.glide.Glide
 
 /**
@@ -26,11 +26,11 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(fotos[position], listener)
-        if (position > oldposition) {
+        holder.bind(fotos[holder.bindingAdapterPosition], listener)
+        if (holder.bindingAdapterPosition > oldposition) {
             animate(holder, true)
         } else animate(holder, false)
-        oldposition = position
+        oldposition = holder.bindingAdapterPosition
     }
 
     override fun getItemCount(): Int {
@@ -64,7 +64,7 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
                     .load(foto.medium)
                     .placeholder(R.drawable.placeholder)
                     .into(imageViewFoto)
-            itemView.setOnClickListener { listener.onItemClick(foto, adapterPosition) }
+            itemView.setOnClickListener { listener.onItemClick(foto, bindingAdapterPosition) }
         }
 
         init {

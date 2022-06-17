@@ -14,17 +14,19 @@ import com.bove.martin.pexel.R
 import com.bove.martin.pexel.databinding.ActivityFullFotoBinding
 import com.bove.martin.pexel.utils.AppConstants
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class FullFotoActivity : AppCompatActivity() {
-    private var photoUrl: String? = null
-    private var largePhotoUrl: String? = null
+    private lateinit var photoUrl: String
+    private lateinit var largePhotoUrl: String
     private var photographerUrl: String? = null
     private var downloadForSharing = false
 
@@ -38,10 +40,9 @@ class FullFotoActivity : AppCompatActivity() {
         setContentView(binding.root)
         loadContentFormBundle()
 
-
-        viewModel.haveStoragePermission.observe(this) { aBoolean ->
-            if (aBoolean != null) {
-                if (!aBoolean) {
+        viewModel.haveStoragePermission.observe(this) { havePermission ->
+            if (havePermission != null) {
+                if (!havePermission) {
                     Toast.makeText(
                         this@FullFotoActivity,
                         R.string.permissionErrorStorage,
@@ -54,7 +55,6 @@ class FullFotoActivity : AppCompatActivity() {
         }
 
         binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
-
         binding.buttonSetWallPapperLock.setOnClickListener { setWallpaper(true) }
 
         binding.pexelLogo.setOnClickListener {
@@ -64,38 +64,33 @@ class FullFotoActivity : AppCompatActivity() {
         }
 
         binding.textViewPhotgraperName.setOnClickListener {
-            if (photoUrl != null) {
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(photographerUrl)
-                startActivity(i)
-            }
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(photographerUrl)
+            startActivity(i)
         }
 
         viewModel.operationResult.observe(this) { operationResult ->
-            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT)
-                .show()
-            binding.buttonSetWallPapper.isEnabled = true
-            binding.buttonSetWallPapperLock.isEnabled = true
-            hideProgressBar()
+            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT).show()
+            enableDisableUI(true)
+            showHideProgressBar(false)
             if (operationResult.operationResult) {
                 showSuccessAnim()
             }
         }
 
         viewModel.savedFoto.observe(this) { uri ->
-            hideProgressBar()
+            showHideProgressBar(false)
             shareBitmap(uri)
         }
     }
 
-
     private fun loadContentFormBundle() {
-        if (intent.hasExtra(AppConstants.PHOTO_URL)) {
-            photoUrl = intent.getStringExtra(AppConstants.PHOTO_URL)
+        if (intent.hasExtra(AppConstants.PHOTO_URL) && intent.hasExtra(AppConstants.LARGE_FOTO_URL)) {
+            photoUrl = intent.getStringExtra(AppConstants.PHOTO_URL).toString()
+            largePhotoUrl = intent.getStringExtra(AppConstants.LARGE_FOTO_URL).toString()
             Glide.with(this).load(photoUrl).centerInside().into(binding.imageViewLargeFoto)
-        }
-        if (intent.hasExtra(AppConstants.LARGE_FOTO_URL)) {
-            largePhotoUrl = intent.getStringExtra(AppConstants.LARGE_FOTO_URL)
+        } else {
+            showErrors(getString(R.string.loadImageError))
         }
         if (intent.hasExtra(AppConstants.PHOTOGRAPHER_URL)) {
             photographerUrl = intent.getStringExtra(AppConstants.PHOTOGRAPHER_URL)
@@ -108,12 +103,27 @@ class FullFotoActivity : AppCompatActivity() {
         }
     }
 
-    private fun showProgressBar() {
-        binding.progressBar.visibility = View.VISIBLE
+    private fun showErrors(errorMessage: String) {
+        Snackbar.make(
+            this.findViewById(android.R.id.content),
+            errorMessage,
+            Snackbar.LENGTH_INDEFINITE
+        ).setAction(getString(R.string.back), View.OnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }).show()
     }
 
-    private fun hideProgressBar() {
-        binding.progressBar.visibility = View.GONE
+    private fun showHideProgressBar(isVisible: Boolean) {
+        if(isVisible) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun enableDisableUI(isEnable: Boolean) {
+        binding.buttonSetWallPapper.isEnabled = isEnable
+        binding.buttonSetWallPapperLock.isEnabled = isEnable
     }
 
     private fun showSuccessAnim() {
@@ -121,17 +131,16 @@ class FullFotoActivity : AppCompatActivity() {
     }
 
     private fun setWallpaper(isLockScreen: Boolean) {
-        binding.buttonSetWallPapper.isEnabled = false
-        binding.buttonSetWallPapperLock.isEnabled = false
-        showProgressBar()
-        viewModel.setWallpaper(largePhotoUrl!!, isLockScreen)
+        enableDisableUI(false)
+        showHideProgressBar(true)
+        viewModel.setWallpaper(largePhotoUrl, isLockScreen)
     }
 
     private fun downloadFoto(isForSharing: Boolean) {
         downloadForSharing = isForSharing
-        if (viewModel.haveStoragePermission.value != null && viewModel.haveStoragePermission.value!!) {
-            showProgressBar()
-            viewModel.downloadFoto(largePhotoUrl!!)
+        if (viewModel.haveStoragePermission.value != null && viewModel.haveStoragePermission.value == true) {
+            showHideProgressBar(true)
+            viewModel.downloadFoto(largePhotoUrl)
         } else {
             checkStoragePermission()
         }

@@ -1,19 +1,19 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.operations
 
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.data.model.OperationResult
+import com.bove.martin.pexel.domain.model.OperationResult
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 24-Sep-20.
  * E-mail: mbove77@gmail.com
  */
-class WallpaperOperations {
-
+class WallpaperOperations @Inject constructor() {
 
     fun setWallpaper(resource: Bitmap?, isLockScreen: Boolean, context: Context): OperationResult {
         val wallpaperManager = WallpaperManager.getInstance(context)

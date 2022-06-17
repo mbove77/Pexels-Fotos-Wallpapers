@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.data.model
+package com.bove.martin.pexel.domain.model
 
 /**
  * Created by Martín Bove on 28/05/2018.

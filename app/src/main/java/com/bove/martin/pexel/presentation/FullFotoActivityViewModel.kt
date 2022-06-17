@@ -1,27 +1,27 @@
 package com.bove.martin.pexel.presentation
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bove.martin.pexel.data.model.OperationResult
-import com.bove.martin.pexel.domain.FileOperations
-import com.bove.martin.pexel.domain.WallpaperOperations
-import com.bove.martin.pexel.utils.UriToBitmap
+import com.bove.martin.pexel.domain.DownloadFotoUseCase
+import com.bove.martin.pexel.domain.SetWallpaperUseCase
+import com.bove.martin.pexel.domain.model.OperationResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Created by Martín Bove on 07-Feb-20.
  * E-mail: mbove77@gmail.com
  */
-class FullFotoActivityViewModel(application: Application) : AndroidViewModel(application) {
-    private val uriToBitmap = UriToBitmap()
-    private val filesOperations = FileOperations()
-    private val wallpaper = WallpaperOperations()
-    private val context = getApplication<Application>().applicationContext
+@HiltViewModel
+class FullFotoActivityViewModel @Inject constructor(
+    private val setWallpaperUseCase: SetWallpaperUseCase,
+    private val downloadFotoUseCase: DownloadFotoUseCase
+): ViewModel() {
 
     val haveStoragePermission = MutableLiveData<Boolean>()
     val operationResult = MutableLiveData<OperationResult>()
@@ -33,8 +33,7 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
 
     fun setWallpaper(url: String, isLockScreen: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = uriToBitmap.getBitmap(url, context)
-            val resultOperation =  wallpaper.setWallpaper(bitmap, isLockScreen, context)
+            val resultOperation = setWallpaperUseCase(url, isLockScreen)
 
             withContext(Dispatchers.Main) {
                 operationResult.postValue(resultOperation)
@@ -44,8 +43,7 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
 
     fun downloadFoto(fotoUrl:String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmap = uriToBitmap.getBitmap(fotoUrl, context)
-            val resultOperation = filesOperations.saveImage(context, bitmap)
+            val resultOperation = downloadFotoUseCase(fotoUrl)
 
             withContext(Dispatchers.Main) {
                if (resultOperation.operationResult ) {
@@ -56,6 +54,4 @@ class FullFotoActivityViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
-
-    
 }

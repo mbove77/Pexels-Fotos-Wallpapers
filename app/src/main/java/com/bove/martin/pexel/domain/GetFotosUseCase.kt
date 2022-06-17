@@ -1,7 +1,7 @@
 package com.bove.martin.pexel.domain
 
-import com.bove.martin.pexel.data.model.OperationResult
-import com.bove.martin.pexel.data.repositories.FotosRepository
+import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.data.network.FotosRepository
 import javax.inject.Inject
 
 /**
