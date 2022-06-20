@@ -1,7 +1,10 @@
 package com.bove.martin.pexel
 
 import android.app.Application
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.HiltAndroidApp
+
 
 /**
  * Created by Martín Bove on 27-Oct-20.
@@ -9,4 +12,10 @@ import dagger.hilt.android.HiltAndroidApp
  */
 
 @HiltAndroidApp
-class MyApplication: Application() {}
+class MyApplication: Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        Logger.addLogAdapter(AndroidLogAdapter())
+    }
+}

@@ -13,35 +13,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.bove.martin.pexel.AppConstants
 import com.bove.martin.pexel.R
+import com.bove.martin.pexel.databinding.ActivityMainBinding
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.Search
-import com.bove.martin.pexel.databinding.ActivityMainBinding
 import com.bove.martin.pexel.presentation.adapters.FotoAdapter
 import com.bove.martin.pexel.presentation.adapters.SearchAdapter
 import com.bove.martin.pexel.presentation.adapters.SearchAdapter.OnSearchItemClickListener
-import com.bove.martin.pexel.utils.AppConstants
-import com.bove.martin.pexel.utils.EndlessRecyclerViewScrollListener
-import com.bove.martin.pexel.utils.MyRecyclerScroll
+import com.bove.martin.pexel.presentation.utils.EndlessRecyclerViewScrollListener
+import com.bove.martin.pexel.presentation.utils.MyRecyclerScroll
+import com.bove.martin.pexel.presentation.utils.NpaStaggeredGridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 
 //TODO implement voice search
 //TODO translate searches
 //TODO implement connection monitor
-//TODO implementar navigation graph y transiciones
-//TODO cambiar los adapters para que acepeten la conelleccion despues de creados.
-//TODO para hacer el scroll horizontal una vez seleccionada una foto, debemos pasar todos las pantallas a fragments asi usamos siempre la misma conexión de datos.
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRefreshListener {
+class MainActivity : AppCompatActivity(), FotoAdapter.OnFotoClickListener,  OnRefreshListener {
     private val viewModel by viewModels<MainActivityViewModel>()
     private lateinit var binding: ActivityMainBinding
-
-    private lateinit var layoutManager: StaggeredGridLayoutManager
-    private lateinit var searchesLayoutManager: LinearLayoutManager
-    private var fotoAdapter: FotoAdapter? = null
-    private var searchAdapter: SearchAdapter? = null
-
     private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,68 +41,26 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setTheme(R.style.AppTheme)
-        initRecyclerView()
-        initRecyclerViewSearch()
-        binding.swipeContainer.setOnRefreshListener(this)
 
-        // load more items whew reach near the end of the list.
-        binding.recyclerViewFotos.addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                viewModel.getMoreFotos(false)
-            }
-        })
+        initUi()
+        initObservables()
+        getPhotos()
+        initScrollListeners()
+    }
 
-        // initial load of the photos and searches
-        getPhotos(false)
-        viewModel.getSearchOptions()
-
-        // searches observer
-        viewModel.searches.observe(this) {
-            if (searchAdapter != null) {
-                binding.recyclerViewSearchs.adapter = searchAdapter
-            } else {
-                searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item,
-                    object : OnSearchItemClickListener {
-                        override fun onSearchSuggestItemClick(search: Search, posicion: Int) {
-                            viewModel.setQueryString(search.searchInEnglish)
-                            searchView.isIconified = true
-                            searchView.onActionViewCollapsed()
-                        }
-                    })
-                binding.recyclerViewSearchs.adapter = searchAdapter
-            }
-        }
-
-
-        // photos observer
-        viewModel.fotos.observe(this) {
-            if (!it.isNullOrEmpty()) {
-                binding.mainViewFlipper.displayedChild = 0
-                if (fotoAdapter == null) {
-                    fotoAdapter = FotoAdapter(it, R.layout.recycler_view_item, this)
-                    binding.recyclerViewFotos.adapter = fotoAdapter
-                    hideProgressBar()
-                } else {
-                    if (it.size > AppConstants.ITEM_NUMBER) {
-                        fotoAdapter!!.notifyItemRangeInserted(
-                            it.size - AppConstants.ITEM_NUMBER,
-                            AppConstants.ITEM_NUMBER
-                        )
-                    } else {
-                        fotoAdapter!!.notifyDataSetChanged()
-                        binding.recyclerViewFotos.scrollToPosition(0)
-                    }
-                    hideProgressBar()
+    private fun initScrollListeners() {
+        // Load more items whew reach near the end of the list.
+        with(binding) {
+            recyclerViewFotos.addOnScrollListener(object : EndlessRecyclerViewScrollListener(
+                recyclerViewFotos.layoutManager as StaggeredGridLayoutManager
+            ) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    viewModel.getFotos()
                 }
-            } else {
-                binding.mainViewFlipper.displayedChild = 1
-            }
+            })
         }
 
-        // queryString observer
-        viewModel.queryString.observe(this) { searchForPhotos() }
-
-        // hide & show searches recycler based on scroll.
+        // Hide or show searches recycler based on scroll.
         binding.recyclerViewFotos.addOnScrollListener(object : MyRecyclerScroll() {
             override fun show() {
                 binding.searchesLayout.visibility = View.VISIBLE
@@ -122,8 +72,49 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         })
     }
 
+    private fun initObservables() {
+        viewModel.searches.observe(this) {
+            if (binding.recyclerViewSearchs.adapter == null) {
+                val searchAdapter = SearchAdapter(it, R.layout.recycler_view_search_item,
+                    object : OnSearchItemClickListener {
+                        override fun onSearchSuggestItemClick(search: Search, posicion: Int) {
+                            viewModel.setQueryString(search.searchInEnglish)
+                            searchView.isIconified = true
+                            searchView.onActionViewCollapsed()
+                            searchForPhotos()
+                        }
+                    })
+                binding.recyclerViewSearchs.adapter = searchAdapter
+            }
+        }
+
+        viewModel.fotos.observe(this) {
+            if (!it.isNullOrEmpty()) {
+                binding.mainViewFlipper.displayedChild = 0
+                if (binding.recyclerViewFotos.adapter == null) {
+                    binding.recyclerViewFotos.adapter = FotoAdapter(it, R.layout.recycler_view_item, this)
+                    showHideProgressBar(false)
+                } else {
+                    if (it.size > AppConstants.ITEM_NUMBER) {
+                        binding.recyclerViewFotos.adapter!!.notifyItemRangeInserted(
+                            it.size - AppConstants.ITEM_NUMBER,
+                            AppConstants.ITEM_NUMBER
+                        )
+                    } else {
+                        binding.recyclerViewFotos.adapter!!.notifyDataSetChanged()
+                        binding.recyclerViewFotos.scrollToPosition(0)
+                    }
+                    showHideProgressBar(false)
+                }
+            } else {
+                binding.mainViewFlipper.displayedChild = 1
+            }
+        }
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        val layoutManager = binding.recyclerViewFotos.layoutManager as NpaStaggeredGridLayoutManager
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             layoutManager.spanCount = 3
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -131,15 +122,15 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         }
     }
 
-    private fun initRecyclerView() {
-        layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    private fun initUi() {
+        val layoutManager = NpaStaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.recyclerViewFotos.layoutManager = layoutManager
-    }
+        binding.swipeContainer.setOnRefreshListener(this)
 
-    private fun initRecyclerViewSearch() {
-        searchesLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        val searchesLayoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         binding.recyclerViewSearchs.layoutManager = searchesLayoutManager
         binding.recyclerViewSearchs.itemAnimator = DefaultItemAnimator()
+        viewModel.getSearchOptions()
     }
 
     // Search Menu
@@ -150,8 +141,9 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (query !== viewModel.queryString.value) {
+                if (query !== viewModel.getQueryString()) {
                     viewModel.setQueryString(query)
+                    searchForPhotos()
                 }
                 return false
             }
@@ -162,42 +154,39 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnItemClickListener,  OnRe
         })
         searchView.setOnCloseListener {
             if (binding.mainViewFlipper.displayedChild == 1) {
-                viewModel.setQueryString(null)
+                viewModel.clearQueryString()
+                getPhotos()
             }
             false
         }
         return true
     }
 
-    override fun onItemClick(foto: Foto?, posicion: Int) {
+    override fun onFotoClick(foto: Foto, position: Int) {
         val largeFotoIntent = Intent(this, FullFotoActivity::class.java)
-        largeFotoIntent.putExtra(AppConstants.PHOTO_URL, foto!!.large)
+        largeFotoIntent.putExtra(AppConstants.PHOTO_URL, foto.large)
         largeFotoIntent.putExtra(AppConstants.LARGE_FOTO_URL, foto.large2x)
         largeFotoIntent.putExtra(AppConstants.PHOTOGRAPHER_NAME, foto.photographer)
         largeFotoIntent.putExtra(AppConstants.PHOTOGRAPHER_URL, foto.url)
         startActivity(largeFotoIntent)
     }
 
-    // onRefresh SwipeContainer
     override fun onRefresh() {
-        viewModel.setQueryString(null)
+        viewModel.clearQueryString()
+        viewModel.getFotos()
     }
 
-    private fun showProgressBar() {
-        binding.swipeContainer.isRefreshing = true
+    private fun showHideProgressBar(isVisible: Boolean) {
+        binding.swipeContainer.isRefreshing = isVisible
     }
 
-    private fun hideProgressBar() {
-        binding.swipeContainer.isRefreshing = false
-    }
-
-    private fun getPhotos(resetList: Boolean) {
-        showProgressBar()
-        viewModel.getFotos(resetList)
+    private fun getPhotos() {
+        showHideProgressBar(true)
+        viewModel.getFotos()
     }
 
     private fun searchForPhotos() {
-        showProgressBar()
-        viewModel.getFotos(true)
+        showHideProgressBar(true)
+        viewModel.getSearchedFotos()
     }
 }

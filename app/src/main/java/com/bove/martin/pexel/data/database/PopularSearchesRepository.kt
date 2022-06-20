@@ -12,13 +12,11 @@ import javax.inject.Inject
  */
 class PopularSearchesRepository @Inject constructor(private  val searchesDao: SearchesDao) {
 
-    //TODO Tratar de obviar la llamada al count
     suspend fun getAllSearches(): List<Search> {
         if (searchesDao.getSearchesCount() <= 0) {
             searchesDao.insertAll(populateSearchList().map { it.toDatabase() })
         }
-        val randomOrderSearch = searchesDao.getAll().map { it.toModel() }
-        return randomOrderSearch.shuffled()
+        return searchesDao.getAll().map { it.toModel() }
     }
 
     private fun populateSearchList(): List<Search> {

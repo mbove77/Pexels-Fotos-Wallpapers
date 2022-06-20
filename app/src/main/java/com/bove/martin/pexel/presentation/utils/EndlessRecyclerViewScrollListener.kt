@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.utils
+package com.bove.martin.pexel.presentation.utils
 
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager

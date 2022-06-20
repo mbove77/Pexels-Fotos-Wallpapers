@@ -13,6 +13,7 @@
     <string name="wallpaperLockError">Disculpa, tu dispositivo no soporta esta función.</string>
     <string name="loadImageError">Error al cargar la imagen.</string>
     <string name="connectionError">Fallo la conexión con el servidor.</string>
+    <string name="queryStringError">Fallo al buscar fotos.</string>
     <string name="permissionError">Necesitamos el permiso de setear wallpapers para funcionar.</string>
     <string name="permissionErrorStorage">Necesitamos los permisos para compartir la imagen.</string>
     <string name="no_results">No tenemos nada para mostrarte, prueba con la búsqueda en inglés!</string>

@@ -1,9 +1,9 @@
 package com.bove.martin.pexel.di
 
-import com.bove.martin.pexel.domain.model.Foto
+import com.bove.martin.pexel.AppConstants
 import com.bove.martin.pexel.data.network.retrofit.GsonDeserializador
 import com.bove.martin.pexel.data.network.retrofit.PexelService
-import com.bove.martin.pexel.utils.AppConstants
+import com.bove.martin.pexel.domain.model.Foto
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.utils
+package com.bove.martin.pexel
 
 /**
  * Created by Martín Bove on 02/06/2018.
