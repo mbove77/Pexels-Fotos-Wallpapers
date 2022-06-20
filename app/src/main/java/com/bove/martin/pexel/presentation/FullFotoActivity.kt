@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.bove.martin.pexel.AppConstants
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.databinding.ActivityFullFotoBinding
-import com.bove.martin.pexel.utils.AppConstants
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
@@ -38,8 +38,20 @@ class FullFotoActivity : AppCompatActivity() {
 
         binding = ActivityFullFotoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        loadContentFormBundle()
 
+        loadContentFormBundle()
+        initUi()
+        initObservables()
+    }
+
+    private fun initUi() {
+        binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
+        binding.buttonSetWallPapperLock.setOnClickListener { setWallpaper(true) }
+        binding.pexelLogo.setOnClickListener { startUrlIntent(AppConstants.PEXELS_URL) }
+        binding.textViewPhotgraperName.setOnClickListener { photographerUrl?.let { url -> startUrlIntent(url) } }
+    }
+
+    private fun initObservables() {
         viewModel.haveStoragePermission.observe(this) { havePermission ->
             if (havePermission != null) {
                 if (!havePermission) {
@@ -52,21 +64,6 @@ class FullFotoActivity : AppCompatActivity() {
                     downloadFoto(downloadForSharing)
                 }
             }
-        }
-
-        binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
-        binding.buttonSetWallPapperLock.setOnClickListener { setWallpaper(true) }
-
-        binding.pexelLogo.setOnClickListener {
-            val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(AppConstants.PEXELS_URL)
-            startActivity(i)
-        }
-
-        binding.textViewPhotgraperName.setOnClickListener {
-            val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(photographerUrl)
-            startActivity(i)
         }
 
         viewModel.operationResult.observe(this) { operationResult ->
@@ -108,9 +105,9 @@ class FullFotoActivity : AppCompatActivity() {
             this.findViewById(android.R.id.content),
             errorMessage,
             Snackbar.LENGTH_INDEFINITE
-        ).setAction(getString(R.string.back), View.OnClickListener {
+        ).setAction(getString(R.string.back)) {
             startActivity(Intent(this, MainActivity::class.java))
-        }).show()
+        }.show()
     }
 
     private fun showHideProgressBar(isVisible: Boolean) {
@@ -144,6 +141,12 @@ class FullFotoActivity : AppCompatActivity() {
         } else {
             checkStoragePermission()
         }
+    }
+
+    private fun startUrlIntent(Url: String) {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(Url)
+        startActivity(i)
     }
 
     private fun shareBitmap(imageUri: Uri?) {

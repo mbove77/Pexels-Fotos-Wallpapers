@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
  * Created by Martín Bove on 31/05/2018.
  * E-mail: mbove77@gmail.com
  */
-class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, private val listener: OnItemClickListener) : RecyclerView.Adapter<FotoAdapter.ViewHolder>() {
+class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, private val listener: OnFotoClickListener) : RecyclerView.Adapter<FotoAdapter.ViewHolder>() {
     private var oldposition = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //Inflamos la vista
@@ -59,12 +59,12 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
         private val imageViewFoto: ImageView
 
         // Aca esta la logica de remplazo de datos y asiganacion de eventos
-        fun bind(foto: Foto, listener: OnItemClickListener) {
+        fun bind(foto: Foto, listener: OnFotoClickListener) {
             Glide.with(itemView)
                     .load(foto.medium)
                     .placeholder(R.drawable.placeholder)
                     .into(imageViewFoto)
-            itemView.setOnClickListener { listener.onItemClick(foto, bindingAdapterPosition) }
+            itemView.setOnClickListener { listener.onFotoClick(foto, bindingAdapterPosition) }
         }
 
         init {
@@ -73,7 +73,7 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
     }
 
     // Listener para comunicar el item click
-    interface OnItemClickListener {
-        fun onItemClick(foto: Foto?, posicion: Int)
+    interface OnFotoClickListener {
+        fun onFotoClick(foto: Foto, position: Int)
     }
 }

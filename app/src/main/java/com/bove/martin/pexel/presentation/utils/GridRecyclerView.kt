@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.utils
+package com.bove.martin.pexel.presentation.utils
 
 import android.content.Context
 import android.util.AttributeSet
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Created by Martín Bove on 16-Feb-20.
  * E-mail: mbove77@gmail.com
  */
+@Suppress("KDocUnresolvedReference")
 class GridRecyclerView : RecyclerView {
     /** @see View.View
      */
