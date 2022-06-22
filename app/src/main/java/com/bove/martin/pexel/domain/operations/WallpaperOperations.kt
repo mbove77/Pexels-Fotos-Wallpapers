@@ -4,7 +4,8 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
-import com.bove.martin.pexel.R
+import com.bove.martin.pexel.AppConstants.AppErrors
+import com.bove.martin.pexel.AppConstants.AppMessages
 import com.bove.martin.pexel.domain.model.OperationResult
 import java.io.IOException
 import javax.inject.Inject
@@ -19,21 +20,21 @@ class WallpaperOperations @Inject constructor() {
         val wallpaperManager = WallpaperManager.getInstance(context)
 
         if (resource == null) {
-            return OperationResult(false, context.getString(R.string.loadImageError), null)
+            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }
         try {
             if (isLockScreen) {
                 if (Build.VERSION.SDK_INT >= 24) {
                     wallpaperManager.setBitmap(resource, null, true, WallpaperManager.FLAG_LOCK)
                 } else {
-                    return OperationResult(false, context.getString(R.string.wallpaperLockError), null)
+                    return OperationResult(false, AppErrors.WALLPAPER_LOCK_ERROR.getErrorMessage(), null)
                 }
             } else {
                 wallpaperManager.setBitmap(resource)
             }
         } catch (e: IOException) {
-            return OperationResult(false, context.getString(R.string.loadImageError), null)
+            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }
-        return OperationResult(true, context.getString(R.string.wallpaperChange), null)
+        return OperationResult(true, AppMessages.WALLPAPER_CHANGE.getMessage(), null)
     }
 }

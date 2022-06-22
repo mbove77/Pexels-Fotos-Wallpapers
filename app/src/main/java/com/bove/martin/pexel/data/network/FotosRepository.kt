@@ -1,13 +1,11 @@
 package com.bove.martin.pexel.data.network
 
 import android.content.Context
-import android.content.res.Resources
-import com.bove.martin.pexel.AppConstants
-import com.bove.martin.pexel.R
+import com.bove.martin.pexel.AppConstants.AppErrors
+import com.bove.martin.pexel.AppConstants.ITEM_NUMBER
 import com.bove.martin.pexel.data.network.retrofit.PexelService
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.OperationResult
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Response
 import javax.inject.Inject
@@ -20,51 +18,48 @@ import javax.inject.Inject
 class FotosRepository @Inject constructor(private val fotosApi: PexelService, @ApplicationContext val context: Context) {
 
     suspend fun getCuratedFotos(pageNumber: Int): OperationResult {
+        return if(pageNumber < 0) {
+            val response: Response<List<Foto>> =
+                fotosApi.getCurated(ITEM_NUMBER, pageNumber)
 
-        val response: Response<List<Foto>> =
-            fotosApi.getCurated(AppConstants.ITEM_NUMBER, pageNumber)
-
-        return if (response.isSuccessful) {
-            if (response.body().isNullOrEmpty()) {
-                OperationResult(false, Resources.getSystem().getString(R.string.loadImageError), null)
+            if (response.isSuccessful) {
+                if (!response.body().isNullOrEmpty()) {
+                    OperationResult(true, null, response.body())
+                } else {
+                    notifyError(AppErrors.LOAD_IMAGE_ERROR)
+                }
             } else {
-                OperationResult(true, null, response.body())
+                notifyError(AppErrors.CONNECTION_ERROR)
             }
         } else {
-            OperationResult(false, Resources.getSystem().getString(R.string.connectionError), null)
+            notifyError(AppErrors.PAGING_ERROR)
         }
     }
 
     suspend fun getSearchedFotos(queryString: String?, pageNumber: Int): OperationResult {
+        return if(pageNumber < 0) {
+            if (!queryString.isNullOrEmpty()) {
+                val response: Response<List<Foto>> =
+                    fotosApi.getSearch(queryString, ITEM_NUMBER, pageNumber)
 
-        if(!queryString.isNullOrEmpty()) {
-            val response: Response<List<Foto>> =
-                fotosApi.getSearch(queryString, AppConstants.ITEM_NUMBER, pageNumber)
-
-            return if (response.isSuccessful) {
-                if (response.body().isNullOrEmpty()) {
-                    Logger.w(context.getString(R.string.loadImageError))
-
-                    OperationResult(
-                        false,
-                        context.getString(R.string.loadImageError),
-                        null
-                    )
+                if (response.isSuccessful) {
+                    if (!response.body().isNullOrEmpty()) {
+                        OperationResult(true, null, response.body())
+                    } else {
+                        notifyError(AppErrors.LOAD_IMAGE_ERROR)
+                    }
                 } else {
-                    OperationResult(true, null, response.body())
+                    notifyError(AppErrors.CONNECTION_ERROR)
                 }
             } else {
-                OperationResult(
-                    false,
-                    context.getString(R.string.connectionError),
-                    null
-                )
+                notifyError(AppErrors.QUERY_STRING_ERROR)
             }
         } else {
-            return OperationResult(
-                false,
-                context.getString(R.string.queryStringError),
-                null)
+            notifyError(AppErrors.PAGING_ERROR)
         }
+    }
+
+    private fun notifyError(errorString: AppErrors): OperationResult {
+        return OperationResult(false, errorString.getErrorMessage(), null)
     }
 }

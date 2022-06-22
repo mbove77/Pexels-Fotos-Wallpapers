@@ -8,8 +8,9 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import com.bove.martin.pexel.AppConstants.AppErrors
+import com.bove.martin.pexel.AppConstants.AppMessages
 import com.bove.martin.pexel.AppConstants.IMAGES_FOLDER_NAME
-import com.bove.martin.pexel.R
 import com.bove.martin.pexel.domain.model.OperationResult
 import java.io.File
 import java.io.FileOutputStream
@@ -30,7 +31,7 @@ class FileOperations @Inject constructor() {
         val uniqueName = UUID.randomUUID().toString()
 
         if (bitmap == null) {
-            return OperationResult(false, context.getString(R.string.loadImageError), null)
+            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -55,12 +56,12 @@ class FileOperations @Inject constructor() {
             fos?.let { Objects.requireNonNull(fos).close() }
         } catch (e: IOException) {
             imageUri?.let { resolver.delete(it, null, null) }
-            return OperationResult(false, context.getString(R.string.loadImageError), null)
+            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }
         return if (imageUri == null) {
-            OperationResult(false, context.getString(R.string.loadImageError), null)
+            OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         } else {
-            OperationResult(true, context.getString(R.string.fileDownload), imageUri)
+            OperationResult(true, AppMessages.FILE_DOWNLOADED.getMessage(), imageUri)
         }
     }
 }
