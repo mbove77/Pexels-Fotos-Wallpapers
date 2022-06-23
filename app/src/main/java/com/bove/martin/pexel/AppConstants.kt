@@ -18,6 +18,7 @@ object AppConstants {
         CONNECTION_ERROR { override fun getErrorMessage() = "Fallo la conexión con el servidor." },
         LOAD_IMAGE_ERROR { override fun getErrorMessage() = "Error al cargar la imagen."},
         PAGING_ERROR { override fun getErrorMessage() = "El número de página debe ser mayor a 0" },
+        PHOTO_URL_ERROR { override fun getErrorMessage() = "La url de la foto es invalida." },
         QUERY_STRING_ERROR { override fun getErrorMessage() = "Fallo al buscar fotos." },
         PERMISSION_ERROR { override fun getErrorMessage() = "Necesitamos el permiso de setear wallpapers para funcionar." },
         SHARE_PERMISSION_ERROR { override fun getErrorMessage() = "Necesitamos los permisos para compartir la imagen." },
