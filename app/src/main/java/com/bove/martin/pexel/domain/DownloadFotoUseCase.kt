@@ -12,8 +12,9 @@ import javax.inject.Inject
  * E-mail: mbove77@gmail.com
  */
 class DownloadFotoUseCase @Inject constructor(private  val fileOperations: FileOperations,  @ApplicationContext val context: Context) {
+
     operator fun invoke(fotoUrl:String): OperationResult {
         val bitmap = UriToBitmap().getBitmap(fotoUrl, context)
-        return fileOperations.saveImage(context, bitmap)
+        return    fileOperations.saveImage(context, bitmap)
     }
 }

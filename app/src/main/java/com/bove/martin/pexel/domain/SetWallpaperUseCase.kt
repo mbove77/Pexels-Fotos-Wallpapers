@@ -11,8 +11,9 @@ import javax.inject.Inject
  * Created by Martín Bove on 17/6/2022.
  * E-mail: mbove77@gmail.com
  */
-class SetWallpaperUseCase  @Inject constructor(private val wallpaperOperations: WallpaperOperations, @ApplicationContext val context: Context) {
-    operator fun invoke(url: String, isLockScreen: Boolean): OperationResult  {
+open class SetWallpaperUseCase  @Inject constructor(private val wallpaperOperations: WallpaperOperations, @ApplicationContext val context: Context) {
+
+    open operator fun invoke(url: String, isLockScreen: Boolean): OperationResult  {
         val bitmap = UriToBitmap().getBitmap(url, context)
         return wallpaperOperations.setWallpaper(bitmap, isLockScreen, context)
     }

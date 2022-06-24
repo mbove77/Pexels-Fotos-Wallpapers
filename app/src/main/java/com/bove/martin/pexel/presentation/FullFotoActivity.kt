@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bove.martin.pexel.AppConstants
+import com.bove.martin.pexel.AppConstants.AppErrors
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.databinding.ActivityFullFotoBinding
 import com.bumptech.glide.Glide
@@ -57,7 +58,7 @@ class FullFotoActivity : AppCompatActivity() {
                 if (!havePermission) {
                     Toast.makeText(
                         this@FullFotoActivity,
-                        R.string.permissionErrorStorage,
+                        AppErrors.SHARE_PERMISSION_ERROR.getErrorMessage(),
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
@@ -87,7 +88,7 @@ class FullFotoActivity : AppCompatActivity() {
             largePhotoUrl = intent.getStringExtra(AppConstants.LARGE_FOTO_URL).toString()
             Glide.with(this).load(photoUrl).centerInside().into(binding.imageViewLargeFoto)
         } else {
-            showErrors(getString(R.string.loadImageError))
+            showErrors(AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
         }
         if (intent.hasExtra(AppConstants.PHOTOGRAPHER_URL)) {
             photographerUrl = intent.getStringExtra(AppConstants.PHOTOGRAPHER_URL)
