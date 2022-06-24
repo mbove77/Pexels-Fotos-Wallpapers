@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.operations
 
 import android.annotation.TargetApi
 import android.content.Context
@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bove.martin.pexel.R
-import com.bove.martin.pexel.domain.operations.FileOperations
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -34,19 +33,26 @@ class FileOperationsTest {
 
     @Test
     fun operation_with_null_bitmap_return_false() {
+        //Given
         val operation = FileOperations()
+
+        //When
         val result = operation.saveImage(appContext, null)
 
+        //Then
         Assert.assertNotNull(result)
         Assert.assertFalse(result.operationResult)
     }
 
     @Test
     fun operation_with_bitmap_return_true() {
+        //Given
         val operation = FileOperations()
 
+        //When
         val result = operation.saveImage(appContext, testBmp)
 
+        //Then
         Assert.assertNotNull(result)
         Assert.assertTrue(result.operationResult)
         resultUri = result.resultObject as Uri
@@ -55,10 +61,13 @@ class FileOperationsTest {
     @Test
     @TargetApi(19)
     fun operation_with_bitmap_api19_return_true() {
+        //Given
         val operation = FileOperations()
 
+        //When
         val result = operation.saveImage(appContext, testBmp)
 
+        //Then
         Assert.assertNotNull(result)
         Assert.assertTrue(result.operationResult)
         resultUri = result.resultObject as Uri
@@ -66,8 +75,10 @@ class FileOperationsTest {
 
     @After
     fun after() {
-        val imagefile = File(resultUri.toString())
-        imagefile.let { imagefile.delete() }
+        if (resultUri != null) {
+            val imagefile = File(resultUri.toString())
+            imagefile.let { imagefile.delete() }
+        }
     }
 
 }

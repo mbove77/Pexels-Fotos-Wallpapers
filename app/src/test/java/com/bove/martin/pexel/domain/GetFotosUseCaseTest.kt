@@ -35,24 +35,29 @@ class GetFotosUseCaseTest {
 
     @Test
     fun `when call with pageNumber 0 return error`() = runBlocking {
+        //Given
         coEvery { fotosRepository.getCuratedFotos(0) } returns OperationResult(false, AppConstants.AppErrors.PAGING_ERROR.getErrorMessage(), null)
 
+        //When
         val response = getFotosUseCase(0)
 
+        //Then
         coVerify(exactly = 1) { fotosRepository.getCuratedFotos(0) }
         assert(!response.operationResult)
         assert(response.resultMensaje != null)
-        if (!response.resultMensaje.isNullOrEmpty())
-            assert(response.resultMensaje == AppConstants.AppErrors.PAGING_ERROR.getErrorMessage())
+        assert(response.resultMensaje == AppConstants.AppErrors.PAGING_ERROR.getErrorMessage())
     }
 
     @Test
     fun `when call with pageNumber 1 return list`() = runBlocking {
+        //Given
         val fotoList = listOf(foto)
         coEvery { fotosRepository.getCuratedFotos(1) } returns OperationResult(true, null, fotoList)
 
+        //When
         val response = getFotosUseCase(1)
 
+        //Then
         coVerify(exactly = 1) { fotosRepository.getCuratedFotos(1) }
         assert(response.operationResult)
         assert(response.resultMensaje == null)

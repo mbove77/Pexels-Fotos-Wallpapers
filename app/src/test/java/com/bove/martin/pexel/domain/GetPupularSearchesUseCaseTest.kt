@@ -53,10 +53,13 @@ class GetPupularSearchesUseCaseTest {
 
     @Test
     fun `when call respond list from repository`() = runBlocking {
+        //Given
         coEvery { popularSearchesRepository.getAllSearches() } returns listOfSearches
 
+        //When
         val response = getPupularSearchesUseCase()
 
+        //Then
         coVerify(exactly = 1) { popularSearchesRepository.getAllSearches() }
         assert(response.size == 4)
     }

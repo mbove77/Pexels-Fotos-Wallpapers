@@ -24,6 +24,7 @@ import javax.inject.Inject
  * E-mail: mbove77@gmail.com
  */
 class FileOperations @Inject constructor() {
+
     fun saveImage(context: Context, bitmap: Bitmap?): OperationResult {
         val fos: OutputStream?
         var imageUri: Uri? = null
