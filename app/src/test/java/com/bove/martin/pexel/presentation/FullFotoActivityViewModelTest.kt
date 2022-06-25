@@ -72,32 +72,32 @@ class FullFotoActivityViewModelTest {
 
 
     //TODO fix Uri return bug
-//    @Test
-//    fun `when call downloadFoto with valid params return ok result set savedFoto liveData`() = runTest {
-//        //Given
-//        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
-//
-//        //When
-//        fullFotoActivityViewModel.downloadFoto("fileURL")
-//
-//        //Then
-//        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
-//        //assert(fullFotoActivityViewModel.operationResult.value!!.operationResult)
-//        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-//    }
-//
-//    @Test
-//    fun `when call downloadFoto and return fail result`() = runTest {
-//        //Given
-//        coEvery { downloadFotoUseCase(any()) } returns OperationResult(false, "Error message", Any())
-//
-//        //When
-//        fullFotoActivityViewModel.downloadFoto("fileURL")
-//
-//        //Then
-//        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
-//        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-//    }
+    @Test
+    fun `when call downloadFoto with valid params return ok result set savedFoto liveData`() = runTest {
+        //Given
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
+
+        //When
+        fullFotoActivityViewModel.downloadFoto("fileURL")
+
+        //Then
+        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
+        //assert(fullFotoActivityViewModel.operationResult.value!!.operationResult)
+        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
+    }
+
+    @Test
+    fun `when call downloadFoto and return fail result`() = runTest {
+        //Given
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(false, "Error message", Any())
+
+        //When
+        fullFotoActivityViewModel.downloadFoto("fileURL")
+
+        //Then
+        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
+        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
+    }
 
     @Test
     fun `when call setStoragePermission set liveData`() = runTest {
