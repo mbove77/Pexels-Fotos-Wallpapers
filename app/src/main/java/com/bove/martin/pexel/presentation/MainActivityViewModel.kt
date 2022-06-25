@@ -59,7 +59,7 @@ class MainActivityViewModel @Inject constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getSearchedFotos() {
+    private fun getSearchedFotos() {
         viewModelScope.launch {
             val response = getSearchedFotosUseCase(queryString, pageNumber)
             if (response.operationResult) {

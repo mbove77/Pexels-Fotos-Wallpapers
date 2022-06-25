@@ -29,6 +29,8 @@ import dagger.hilt.android.AndroidEntryPoint
 //TODO implement voice search
 //TODO translate searches
 //TODO implement connection monitor
+//TODO implement favorite view
+//TODO add visual cue when search option is selected
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), FotoAdapter.OnFotoClickListener,  OnRefreshListener {
@@ -44,8 +46,8 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnFotoClickListener,  OnRe
 
         initUi()
         initObservables()
-        getPhotos()
         initScrollListeners()
+        getPhotos()
     }
 
     private fun initScrollListeners() {
@@ -187,6 +189,6 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnFotoClickListener,  OnRe
 
     private fun searchForPhotos() {
         showHideProgressBar(true)
-        viewModel.getSearchedFotos()
+        viewModel.getFotos()
     }
 }

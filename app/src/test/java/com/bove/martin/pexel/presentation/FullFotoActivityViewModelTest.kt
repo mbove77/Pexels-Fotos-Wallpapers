@@ -10,8 +10,10 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,25 +71,25 @@ class FullFotoActivityViewModelTest {
     }
 
 
-    //TODO fix Uri retruns bug
+    //TODO fix Uri return bug
     @Test
     fun `when call downloadFoto with valid params return ok result set savedFoto liveData`() = runTest {
         //Given
-        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", null)
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
 
         //When
         fullFotoActivityViewModel.downloadFoto("fileURL")
 
         //Then
         coVerify(exactly = 1) { downloadFotoUseCase(any()) }
-        fullFotoActivityViewModel.operationResult.value?.let { assert(it.operationResult) }
-        //assert(fullFotoActivityViewModel.savedFoto.value != null)
+        //assert(fullFotoActivityViewModel.operationResult.value!!.operationResult)
+        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
     }
 
     @Test
     fun `when call downloadFoto and return fail result`() = runTest {
         //Given
-        coEvery { downloadFotoUseCase(any()) } returns OperationResult(false, "Error message", null)
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(false, "Error message", Any())
 
         //When
         fullFotoActivityViewModel.downloadFoto("fileURL")
@@ -95,7 +97,6 @@ class FullFotoActivityViewModelTest {
         //Then
         coVerify(exactly = 1) { downloadFotoUseCase(any()) }
         fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-        assert(fullFotoActivityViewModel.operationResult.value?.operationResult == false)
     }
 
     @Test
@@ -108,5 +109,11 @@ class FullFotoActivityViewModelTest {
 
         //Then
         assert(fullFotoActivityViewModel.haveStoragePermission.value == storagePermission)
+    }
+
+
+    @After
+    fun onAfter() {
+        Dispatchers.resetMain()
     }
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class FotosRepository @Inject constructor(private val fotosApi: PexelService, @ApplicationContext val context: Context) {
 
     suspend fun getCuratedFotos(pageNumber: Int): OperationResult {
-        return if(pageNumber < 0) {
+        return if(pageNumber > 0) {
             val response: Response<List<Foto>> =
                 fotosApi.getCurated(ITEM_NUMBER, pageNumber)
 
@@ -37,7 +37,7 @@ class FotosRepository @Inject constructor(private val fotosApi: PexelService, @A
     }
 
     suspend fun getSearchedFotos(queryString: String?, pageNumber: Int): OperationResult {
-        return if(pageNumber < 0) {
+        return if(pageNumber > 0) {
             if (!queryString.isNullOrEmpty()) {
                 val response: Response<List<Foto>> =
                     fotosApi.getSearch(queryString, ITEM_NUMBER, pageNumber)
