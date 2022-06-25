@@ -10,7 +10,7 @@ import com.bove.martin.pexel.data.database.entities.SearchEntity
  * E-mail: mbove77@gmail.com
  */
 
-@Database(entities = [SearchEntity::class], version = 1)
+@Database(entities = [SearchEntity::class], version = 1, exportSchema = false)
 abstract class SearchesDatabase: RoomDatabase() {
 
     abstract fun getSearchesDato(): SearchesDao
