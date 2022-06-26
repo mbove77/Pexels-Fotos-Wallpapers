@@ -29,14 +29,7 @@ class GridRecyclerView : RecyclerView {
     override fun attachLayoutAnimationParameters(child: View, params: ViewGroup.LayoutParams, index: Int, count: Int) {
         val layoutManager = layoutManager
         if (adapter != null && layoutManager is GridLayoutManager) {
-            var animationParams = params.layoutAnimationParameters as GridLayoutAnimationController.AnimationParameters
-            if (animationParams == null) {
-                // If there are no animation parameters, create new once and attach them to
-                // the LayoutParams.
-                animationParams = GridLayoutAnimationController.AnimationParameters()
-                params.layoutAnimationParameters = animationParams
-            }
-
+            val animationParams = params.layoutAnimationParameters as GridLayoutAnimationController.AnimationParameters
             // Next we are updating the parameters
 
             // Set the number of items in the RecyclerView and the index of this item

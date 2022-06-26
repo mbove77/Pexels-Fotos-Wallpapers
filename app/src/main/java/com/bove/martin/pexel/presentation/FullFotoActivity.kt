@@ -24,6 +24,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.hilt.android.AndroidEntryPoint
 
+//TODO Cambiar a negro el color de los iconos de descargar y compartir.
+//TODO Agregar boton para volver atras.
+
 @AndroidEntryPoint
 class FullFotoActivity : AppCompatActivity() {
     private lateinit var photoUrl: String
@@ -46,8 +49,8 @@ class FullFotoActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        binding.buttonSetWallPapper.setOnClickListener { setWallpaper(false) }
-        binding.buttonSetWallPapperLock.setOnClickListener { setWallpaper(true) }
+        binding.buttonSetWallPapper.setOnClickListener { setWallpaper() }
+        binding.buttonSetWallPapperLock.setOnClickListener { setLockScreen() }
         binding.pexelLogo.setOnClickListener { startUrlIntent(AppConstants.PEXELS_URL) }
         binding.textViewPhotgraperName.setOnClickListener { photographerUrl?.let { url -> startUrlIntent(url) } }
     }
@@ -76,9 +79,9 @@ class FullFotoActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.savedFoto.observe(this) { uri ->
+        viewModel.savedFoto.observe(this) { stringUri ->
             showHideProgressBar(false)
-            shareBitmap(uri)
+            shareBitmap(Uri.parse(stringUri))
         }
     }
 
@@ -128,10 +131,16 @@ class FullFotoActivity : AppCompatActivity() {
         binding.successAnimation.playAnimation()
     }
 
-    private fun setWallpaper(isLockScreen: Boolean) {
+    private fun setWallpaper() {
         enableDisableUI(false)
         showHideProgressBar(true)
-        viewModel.setWallpaper(largePhotoUrl, isLockScreen)
+        viewModel.setWallpaper(largePhotoUrl)
+    }
+
+    private fun setLockScreen() {
+        enableDisableUI(false)
+        showHideProgressBar(true)
+        viewModel.setLockScreen(largePhotoUrl)
     }
 
     private fun downloadFoto(isForSharing: Boolean) {

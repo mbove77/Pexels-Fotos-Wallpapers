@@ -62,7 +62,7 @@ class FileOperations @Inject constructor() {
         return if (imageUri == null) {
             OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         } else {
-            OperationResult(true, AppMessages.FILE_DOWNLOADED.getMessage(), imageUri)
+            OperationResult(true, AppMessages.FILE_DOWNLOADED.getMessage(), imageUri.toString())
         }
     }
 }

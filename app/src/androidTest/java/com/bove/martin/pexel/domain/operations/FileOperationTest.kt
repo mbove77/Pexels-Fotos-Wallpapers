@@ -28,7 +28,7 @@ class FileOperationsTest {
     @Before
     fun setup() {
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        testBmp= BitmapFactory.decodeResource(appContext.resources, R.drawable.pexels)
+        testBmp = BitmapFactory.decodeResource(appContext.resources, R.drawable.pexels)
     }
 
     @Test

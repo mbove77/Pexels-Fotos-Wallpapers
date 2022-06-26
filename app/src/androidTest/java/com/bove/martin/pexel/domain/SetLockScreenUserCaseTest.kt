@@ -4,8 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bove.martin.pexel.AppConstants.AppErrors
-import com.bove.martin.pexel.AppConstants.AppMessages
+import com.bove.martin.pexel.AppConstants
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.WallpaperOperations
 import io.mockk.MockKAnnotations
@@ -18,13 +17,11 @@ import org.junit.runner.RunWith
 import java.io.File
 
 /**
- * Created by Martín Bove on 24/6/2022.
+ * Created by Martín Bove on 26/6/2022.
  * E-mail: mbove77@gmail.com
  */
-
 @RunWith(AndroidJUnit4::class)
-class SetWallpaperUseCaseTest {
-
+class SetLockScreenUserCaseTest {
     private lateinit var appContext: Context
     private var resultUri: Uri? = null
 
@@ -33,52 +30,52 @@ class SetWallpaperUseCaseTest {
     @RelaxedMockK
     private lateinit var wallpaperOperationsMock: WallpaperOperations
 
-    private lateinit var setWallpaperUseCase: SetWallpaperUseCase
+    private lateinit var setLockScreenUserCase: SetLockScreenUserCase
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
         wallpaperOperations = WallpaperOperations(appContext)
-        setWallpaperUseCase = SetWallpaperUseCase(wallpaperOperations, appContext)
+        setLockScreenUserCase = SetLockScreenUserCase(wallpaperOperations, appContext)
     }
 
     @Test
-    fun when_call_with_setWallpaper_and_returns_operation_ok() {
+    fun when_call_with_setLockScreen_and_returns_operation_ok() {
         //Given
         val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
 
         //When
-        val result = setWallpaperUseCase(fotoUrl)
+        val result = setLockScreenUserCase(fotoUrl)
 
         //Then
         assert(result.operationResult)
-        assert(result.resultMensaje == AppMessages.WALLPAPER_CHANGE.getMessage())
+        assert(result.resultMensaje == AppConstants.AppMessages.WALLPAPER_CHANGE.getMessage())
     }
 
     @Test
-    fun when_call_with_setWallpaper_with_bad_fotoUrl_returns_operation_fail() {
+    fun when_call_with_setLockScreen_with_bad_fotoUrl_returns_operation_fail() {
         //Given
         val fotoUrl = "error image path"
 
         //When
-        val result = setWallpaperUseCase(fotoUrl)
+        val result = setLockScreenUserCase(fotoUrl)
 
         //Then
         assert(!result.operationResult)
-        assert(result.resultMensaje == AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
+        assert(result.resultMensaje == AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
     }
 
 
     @Test
-    fun when_call_setWallpaper_and_returns_operation_fail() {
+    fun when_call_setLockScreen_and_returns_operation_fail() {
         //Given
-        setWallpaperUseCase = SetWallpaperUseCase(wallpaperOperationsMock, appContext)
+        setLockScreenUserCase = SetLockScreenUserCase(wallpaperOperationsMock, appContext)
         val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
-        every { wallpaperOperationsMock.setWallpaper(any()) } returns OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+        every { wallpaperOperationsMock.setWallpaper(any()) } returns OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
 
         //When
-        val result = setWallpaperUseCase(fotoUrl)
+        val result = setLockScreenUserCase(fotoUrl)
 
         //Then
         assert(!result.operationResult)

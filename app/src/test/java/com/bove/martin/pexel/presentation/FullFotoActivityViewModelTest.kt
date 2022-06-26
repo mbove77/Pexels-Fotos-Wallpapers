@@ -2,6 +2,7 @@ package com.bove.martin.pexel.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.bove.martin.pexel.domain.DownloadFotoUseCase
+import com.bove.martin.pexel.domain.SetLockScreenUserCase
 import com.bove.martin.pexel.domain.SetWallpaperUseCase
 import com.bove.martin.pexel.domain.model.OperationResult
 import io.mockk.MockKAnnotations
@@ -13,10 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 
 /**
  * Created by Martín Bove on 24/6/2022.
@@ -31,6 +29,8 @@ class FullFotoActivityViewModelTest {
     private lateinit var setWallpaperUseCase: SetWallpaperUseCase
     @RelaxedMockK
     private lateinit var downloadFotoUseCase: DownloadFotoUseCase
+    @RelaxedMockK
+    private lateinit var setLockScreenUserCase: SetLockScreenUserCase
 
     @get:Rule
     var rule: InstantTaskExecutorRule = InstantTaskExecutorRule()
@@ -38,7 +38,7 @@ class FullFotoActivityViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        fullFotoActivityViewModel = FullFotoActivityViewModel(setWallpaperUseCase, downloadFotoUseCase)
+        fullFotoActivityViewModel = FullFotoActivityViewModel(setWallpaperUseCase, setLockScreenUserCase, downloadFotoUseCase)
         Dispatchers.setMain(Dispatchers.Unconfined)
     }
 
@@ -46,58 +46,55 @@ class FullFotoActivityViewModelTest {
     @Test
     fun `when call setWallpaper with valid params return ok result`() = runTest {
         //Given
-        coEvery { setWallpaperUseCase(any(), any()) } returns OperationResult(true, "Ok message", null)
+        coEvery { setWallpaperUseCase(any()) } returns OperationResult(true, "Ok message", null)
 
         //When
-        fullFotoActivityViewModel.setWallpaper("fileURL", true)
+        fullFotoActivityViewModel.setWallpaper("fileURL")
 
         //Then
-        coVerify(exactly = 1) { setWallpaperUseCase(any(), any()) }
-        fullFotoActivityViewModel.operationResult.value?.let { assert(it.operationResult) }
+        coVerify(exactly = 1) { setWallpaperUseCase(any()) }
+        Assert.assertTrue(fullFotoActivityViewModel.operationResult.value!!.operationResult)
     }
 
     @Test
     fun `when call setWallpaper and return fail result`() = runTest {
         //Given
-        coEvery { setWallpaperUseCase(any(), any()) } returns OperationResult(false, "Error message", null)
+        coEvery { setWallpaperUseCase(any()) } returns OperationResult(false, "Error message", null)
 
         //When
-        fullFotoActivityViewModel.setWallpaper("fileURL", true)
+        fullFotoActivityViewModel.setWallpaper("fileURL")
 
         //Then
-        coVerify(exactly = 1) { setWallpaperUseCase(any(), any()) }
-        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-        assert(fullFotoActivityViewModel.operationResult.value?.operationResult == false)
+        coVerify(exactly = 1) { setWallpaperUseCase(any()) }
+        Assert.assertFalse(fullFotoActivityViewModel.operationResult.value!!.operationResult)
     }
 
 
-    //TODO fix Uri return bug
-//    @Test
-//    fun `when call downloadFoto with valid params return ok result set savedFoto liveData`() = runTest {
-//        //Given
-//        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
-//
-//        //When
-//        fullFotoActivityViewModel.downloadFoto("fileURL")
-//
-//        //Then
-//        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
-//        //assert(fullFotoActivityViewModel.operationResult.value!!.operationResult)
-//        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-//    }
-//
-//    @Test
-//    fun `when call downloadFoto and return fail result`() = runTest {
-//        //Given
-//        coEvery { downloadFotoUseCase(any()) } returns OperationResult(false, "Error message", Any())
-//
-//        //When
-//        fullFotoActivityViewModel.downloadFoto("fileURL")
-//
-//        //Then
-//        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
-//        fullFotoActivityViewModel.operationResult.value?.let { assert(!it.operationResult) }
-//    }
+    @Test
+    fun `when call downloadFoto with valid params set savedFoto liveData`() = runTest {
+        //Given
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
+
+        //When
+        fullFotoActivityViewModel.downloadFoto("fileURL")
+
+        //Then
+        coVerify(exactly = 1) { downloadFotoUseCase("fileURL") }
+        Assert.assertNotNull(fullFotoActivityViewModel.savedFoto.value)
+    }
+
+    @Test
+    fun `when call downloadFoto and return fail result`() = runTest {
+        //Given
+        coEvery { downloadFotoUseCase("fileURL") } returns OperationResult(false, "Error message", null)
+
+        //When
+        fullFotoActivityViewModel.downloadFoto("fileURL")
+
+        //Then
+        coVerify(exactly = 1) { downloadFotoUseCase(any()) }
+        Assert.assertFalse(fullFotoActivityViewModel.operationResult.value!!.operationResult)
+    }
 
     @Test
     fun `when call setStoragePermission set liveData`() = runTest {
@@ -108,7 +105,7 @@ class FullFotoActivityViewModelTest {
         fullFotoActivityViewModel.setStoragePermission(storagePermission)
 
         //Then
-        assert(fullFotoActivityViewModel.haveStoragePermission.value == storagePermission)
+        Assert.assertTrue(fullFotoActivityViewModel.haveStoragePermission.value!!)
     }
 
 
