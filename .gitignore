@@ -84,5 +84,4 @@ lint/tmp/
 # lint/reports/
 .idea/jarRepositories.xml
 .idea/codeStyles/Project.xml
-gradle/wrapper/gradle-wrapper.properties
 app/src/main/java/com/bove/martin/pexel/ApiKey.kt
