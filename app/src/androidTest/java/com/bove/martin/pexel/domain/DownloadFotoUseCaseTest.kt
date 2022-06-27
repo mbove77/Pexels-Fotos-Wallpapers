@@ -11,6 +11,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +40,7 @@ class DownloadFotoUseCaseTest {
 
 
     @Test
-    fun when_called_return_file_uri() {
+    fun when_called_return_file_uri_string() {
         //Given
         val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
 
@@ -47,11 +48,8 @@ class DownloadFotoUseCaseTest {
         val result = downloadFotoUseCase(fotoUrl)
 
         //Then
-        if (result.resultObject is Uri)
-            resultUri = result.resultObject as Uri
-
-        assert(result.operationResult)
-        assert(result.resultObject is Uri)
+        Assert.assertTrue(result.operationResult)
+        Assert.assertTrue(result.resultObject is String)
     }
 
     @Test
@@ -65,7 +63,7 @@ class DownloadFotoUseCaseTest {
         val result = downloadFotoUseCase(fotoUrl)
 
         //Then
-        assert(!result.operationResult)
+        Assert.assertFalse(result.operationResult)
     }
 
 

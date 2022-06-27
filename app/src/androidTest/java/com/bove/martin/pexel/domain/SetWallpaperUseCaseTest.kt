@@ -12,6 +12,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,8 +53,8 @@ class SetWallpaperUseCaseTest {
         val result = setWallpaperUseCase(fotoUrl)
 
         //Then
-        assert(result.operationResult)
-        assert(result.resultMensaje == AppMessages.WALLPAPER_CHANGE.getMessage())
+        Assert.assertTrue(result.operationResult)
+        Assert.assertTrue(result.resultMensaje == AppMessages.WALLPAPER_CHANGE.getMessage())
     }
 
     @Test
@@ -65,8 +66,8 @@ class SetWallpaperUseCaseTest {
         val result = setWallpaperUseCase(fotoUrl)
 
         //Then
-        assert(!result.operationResult)
-        assert(result.resultMensaje == AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
+        Assert.assertFalse(result.operationResult)
+        Assert.assertTrue(result.resultMensaje == AppErrors.PHOTO_URL_ERROR.getErrorMessage())
     }
 
 
@@ -81,7 +82,7 @@ class SetWallpaperUseCaseTest {
         val result = setWallpaperUseCase(fotoUrl)
 
         //Then
-        assert(!result.operationResult)
+        Assert.assertFalse(result.operationResult)
     }
 
 

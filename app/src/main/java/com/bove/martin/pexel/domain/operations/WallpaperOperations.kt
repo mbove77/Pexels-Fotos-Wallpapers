@@ -32,7 +32,7 @@ class WallpaperOperations @Inject constructor(@ApplicationContext val context: C
             if (Build.VERSION.SDK_INT >= 24) {
                 wallpaperManager.setBitmap(resource, null, true, WallpaperManager.FLAG_LOCK)
             } else {
-                return OperationResult(false, AppErrors.WALLPAPER_LOCK_ERROR.getErrorMessage(), null)
+                return OperationResult(false, AppErrors.LOCKSCREEN_API_VERSION_ERROR.getErrorMessage(), null)
             }
         } catch (e: IOException) {
             return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)

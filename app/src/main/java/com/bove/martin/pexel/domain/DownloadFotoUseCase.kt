@@ -22,7 +22,7 @@ class DownloadFotoUseCase @Inject constructor(private  val fileOperations: FileO
             else
                 OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }catch (e: Exception) {
-            OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+            OperationResult(false, AppConstants.AppErrors.PHOTO_URL_ERROR.getErrorMessage(), null)
         }
 
     }

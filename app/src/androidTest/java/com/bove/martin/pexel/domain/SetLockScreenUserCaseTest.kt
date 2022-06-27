@@ -11,6 +11,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,8 +50,8 @@ class SetLockScreenUserCaseTest {
         val result = setLockScreenUserCase(fotoUrl)
 
         //Then
-        assert(result.operationResult)
-        assert(result.resultMensaje == AppConstants.AppMessages.WALLPAPER_CHANGE.getMessage())
+        Assert.assertTrue(result.operationResult)
+        Assert.assertTrue(result.resultMensaje == AppConstants.AppMessages.WALLPAPER_CHANGE.getMessage())
     }
 
     @Test
@@ -62,8 +63,8 @@ class SetLockScreenUserCaseTest {
         val result = setLockScreenUserCase(fotoUrl)
 
         //Then
-        assert(!result.operationResult)
-        assert(result.resultMensaje == AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
+        Assert.assertFalse(result.operationResult)
+        Assert.assertTrue(result.resultMensaje == AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
     }
 
 
@@ -78,7 +79,7 @@ class SetLockScreenUserCaseTest {
         val result = setLockScreenUserCase(fotoUrl)
 
         //Then
-        assert(!result.operationResult)
+        Assert.assertFalse(result.operationResult)
     }
 
 

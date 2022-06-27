@@ -20,7 +20,7 @@ class SetLockScreenUserCase @Inject constructor(private val wallpaperOperations:
             if (bitmap != null)
                 wallpaperOperations.setLockScreen(bitmap)
             else
-                OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+                OperationResult(false, AppConstants.AppErrors.SET_LOCKSCREEN_ERROR.getErrorMessage(), null)
         } catch (e: Exception) {
             OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
         }

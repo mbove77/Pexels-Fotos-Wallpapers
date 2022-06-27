@@ -16,10 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 
 /**
  * Created by Martín Bove on 24/6/2022.
@@ -61,7 +58,7 @@ class MainActivityViewModelTest {
 
         //Then
         coVerify(exactly = 1) { getFotosUseCase(1) }
-        assert(mainActivityViewModel.fotos.value?.size == 1)
+        Assert.assertTrue(mainActivityViewModel.fotos.value?.size == 1)
     }
 
     @Test
@@ -74,7 +71,7 @@ class MainActivityViewModelTest {
 
         //Then
         coVerify(exactly = 1) { getFotosUseCase(1) }
-        assert(mainActivityViewModel.fotos.value == null)
+        Assert.assertNull(mainActivityViewModel.fotos.value)
     }
 
     @Test
@@ -89,7 +86,7 @@ class MainActivityViewModelTest {
         //Then
         coVerify(exactly = 0) { getFotosUseCase(1) }
         coVerify(exactly = 1) { getSearchedFotosUseCase("car", 1) }
-        assert(mainActivityViewModel.fotos.value?.size == 1)
+        Assert.assertTrue(mainActivityViewModel.fotos.value?.size == 1)
     }
 
     @Test
@@ -104,7 +101,7 @@ class MainActivityViewModelTest {
         //Then
         coVerify(exactly = 0) { getFotosUseCase(1) }
         coVerify(exactly = 1) { getSearchedFotosUseCase("car", 1) }
-        assert(mainActivityViewModel.fotos.value == null)
+        Assert.assertNull(mainActivityViewModel.fotos.value)
     }
 
     @Test
@@ -117,7 +114,7 @@ class MainActivityViewModelTest {
 
         //Then
         coVerify(exactly = 1) { getPupularSearchesUseCase() }
-        assert(mainActivityViewModel.searches.value?.size == 1 )
+        Assert.assertTrue(mainActivityViewModel.searches.value?.size == 1 )
     }
 
 
@@ -130,7 +127,7 @@ class MainActivityViewModelTest {
         mainActivityViewModel.setQueryString(queryStringTest)
 
         //Then
-        assert(mainActivityViewModel.getQueryString().equals(queryStringTest))
+        Assert.assertTrue(mainActivityViewModel.getQueryString().equals(queryStringTest))
     }
 
 
@@ -144,7 +141,7 @@ class MainActivityViewModelTest {
         mainActivityViewModel.setQueryString(null)
 
         //Then
-        assert(mainActivityViewModel.getQueryString().equals(queryStringTest))
+        Assert.assertTrue(mainActivityViewModel.getQueryString().equals(queryStringTest))
     }
 
     @After

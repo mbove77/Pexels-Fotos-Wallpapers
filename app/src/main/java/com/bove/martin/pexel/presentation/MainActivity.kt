@@ -118,9 +118,9 @@ class MainActivity : AppCompatActivity(), FotoAdapter.OnFotoClickListener,  OnRe
         super.onConfigurationChanged(newConfig)
         val layoutManager = binding.recyclerViewFotos.layoutManager as NpaStaggeredGridLayoutManager
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            layoutManager.spanCount = 3
+            layoutManager.spanCount = AppConstants.LANDSCAPE_ROW_COUNT
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager.spanCount = 2
+            layoutManager.spanCount = AppConstants.PORTRAIT_ROW_COUNT
         }
     }
 

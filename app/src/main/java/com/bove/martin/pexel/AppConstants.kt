@@ -12,6 +12,8 @@ object AppConstants {
     const val PHOTOGRAPHER_NAME = "photographer_name"
     const val PHOTOGRAPHER_URL = "photo_url"
     const val ITEM_NUMBER = 15
+    const val LANDSCAPE_ROW_COUNT = 3
+    const val PORTRAIT_ROW_COUNT = 2
     const val IMAGES_FOLDER_NAME = "TEMP_PEXEL_FOLDER"
 
     enum class AppErrors {
@@ -20,9 +22,10 @@ object AppConstants {
         PAGING_ERROR { override fun getErrorMessage() = "El número de página debe ser mayor a 0" },
         PHOTO_URL_ERROR { override fun getErrorMessage() = "La url de la foto es invalida." },
         QUERY_STRING_ERROR { override fun getErrorMessage() = "Fallo al buscar fotos." },
-        PERMISSION_ERROR { override fun getErrorMessage() = "Necesitamos el permiso de setear wallpapers para funcionar." },
+        SET_WALLPAPER_ERROR { override fun getErrorMessage() = "Error al cambiar el wallpaper en el dispositivo." },
         SHARE_PERMISSION_ERROR { override fun getErrorMessage() = "Necesitamos los permisos para compartir la imagen." },
-        WALLPAPER_LOCK_ERROR { override fun getErrorMessage() = "Disculpa, tu dispositivo no soporta esta función." },;
+        SET_LOCKSCREEN_ERROR { override fun getErrorMessage() = "Error al cambiar el wallpaper en el dispositivo." },
+        LOCKSCREEN_API_VERSION_ERROR { override fun getErrorMessage() = "Disculpa, tu dispositivo no soporta esta función." },;
 
         abstract fun getErrorMessage(): String
     }

@@ -55,7 +55,7 @@ class FileOperationsTest {
         //Then
         Assert.assertNotNull(result)
         Assert.assertTrue(result.operationResult)
-        resultUri = result.resultObject as Uri
+        resultUri = Uri.parse(result.resultObject.toString())
     }
 
     @Test
@@ -70,7 +70,7 @@ class FileOperationsTest {
         //Then
         Assert.assertNotNull(result)
         Assert.assertTrue(result.operationResult)
-        resultUri = result.resultObject as Uri
+        resultUri = Uri.parse(result.resultObject.toString())
     }
 
     @After

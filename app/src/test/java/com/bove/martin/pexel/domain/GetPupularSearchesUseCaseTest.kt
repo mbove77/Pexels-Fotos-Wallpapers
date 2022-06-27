@@ -7,6 +7,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -61,6 +62,6 @@ class GetPupularSearchesUseCaseTest {
 
         //Then
         coVerify(exactly = 1) { popularSearchesRepository.getAllSearches() }
-        assert(response.size == 4)
+        Assert.assertTrue(response.size == 4)
     }
 }

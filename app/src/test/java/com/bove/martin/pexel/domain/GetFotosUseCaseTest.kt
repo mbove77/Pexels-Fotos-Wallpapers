@@ -9,6 +9,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -43,9 +44,9 @@ class GetFotosUseCaseTest {
 
         //Then
         coVerify(exactly = 1) { fotosRepository.getCuratedFotos(0) }
-        assert(!response.operationResult)
-        assert(response.resultMensaje != null)
-        assert(response.resultMensaje == AppConstants.AppErrors.PAGING_ERROR.getErrorMessage())
+        Assert.assertFalse(response.operationResult)
+        Assert.assertNotNull(response.resultMensaje)
+        Assert.assertTrue(response.resultMensaje == AppConstants.AppErrors.PAGING_ERROR.getErrorMessage())
     }
 
     @Test
@@ -59,8 +60,8 @@ class GetFotosUseCaseTest {
 
         //Then
         coVerify(exactly = 1) { fotosRepository.getCuratedFotos(1) }
-        assert(response.operationResult)
-        assert(response.resultMensaje == null)
-        assert((response.resultObject as List<Foto>).isNotEmpty())
+        Assert.assertTrue(response.operationResult)
+        Assert.assertNull(response.resultMensaje)
+        Assert.assertTrue((response.resultObject as List<*>).isNotEmpty())
     }
 }

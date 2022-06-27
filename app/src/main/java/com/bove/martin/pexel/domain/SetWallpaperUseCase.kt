@@ -20,9 +20,9 @@ open class SetWallpaperUseCase  @Inject constructor(private val wallpaperOperati
             if (bitmap != null) {
                 wallpaperOperations.setWallpaper(bitmap)
             } else
-                OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+                OperationResult(false, AppErrors.SET_WALLPAPER_ERROR.getErrorMessage(), null)
         } catch (e: Exception) {
-            OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+            OperationResult(false, AppErrors.PHOTO_URL_ERROR.getErrorMessage(), null)
         }
     }
 }
