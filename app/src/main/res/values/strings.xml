@@ -10,4 +10,17 @@
     <string name="no_results">No tenemos nada para mostrarte, prueba con la búsqueda en inglés!</string>
     <string name="wallpaperButton">USAR COMO DE PANTALLA DE INICIO</string>
     <string name="wallpaperButtonBlock">USAR COMO PANTALLA DE BLOQUEO</string>
+
+    <string name="connection_error">Fallo la conexión con el servidor.</string>
+    <string name="load_image_error">Error al cargar la imagen.</string>
+    <string name="paging_error">El número de página debe ser mayor a 0</string>
+    <string name="photo_url_error">La url de la foto es invalida.</string>
+    <string name="query_string_error">Fallo al buscar fotos.</string>
+    <string name="set_wallpaper_error">Error al cambiar el wallpaper en el dispositivo.</string>
+    <string name="share_permission_error">Necesitamos los permisos para compartir la imagen.</string>
+    <string name="set_lockscreen_error">Error al cambiar el wallpaper en el dispositivo.</string>
+    <string name="lockscreen_api_version_error">Disculpa, tu dispositivo no soporta esta función.</string>
+
+    <string name="file_downloaded">Su foto se guardado con éxito</string>
+    <string name="wallpaper_change">Wallpaper cambiado</string>;
 </resources>

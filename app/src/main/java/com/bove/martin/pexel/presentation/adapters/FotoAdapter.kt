@@ -38,15 +38,15 @@ class FotoAdapter(private val fotos: List<Foto>, private val layout: Int, privat
     }
 
     private fun animate(hold: ViewHolder, down: Boolean) {
-        val animator: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", -100f, 0f)
+        val animator = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", -100f, 0f)
         animator.interpolator = OvershootInterpolator()
-        val animator1: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", 100f, 0f)
+        val animator1 = ObjectAnimator.ofFloat(hold.itemView, "TranslationX", 100f, 0f)
         animator1.interpolator = OvershootInterpolator()
-        val animator2: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "TranslationY", if (down) 120f else -120f, 0f)
+        val animator2 = ObjectAnimator.ofFloat(hold.itemView, "TranslationY", if (down) 120f else -120f, 0f)
         animator.interpolator = OvershootInterpolator()
-        val animator3: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "ScaleX", 0.9f, 1f)
+        val animator3 = ObjectAnimator.ofFloat(hold.itemView, "ScaleX", 0.9f, 1f)
         animator3.interpolator = AnticipateOvershootInterpolator()
-        val animator4: ObjectAnimator = ObjectAnimator.ofFloat(hold.itemView, "ScaleY", 0.9f, 1f)
+        val animator4 = ObjectAnimator.ofFloat(hold.itemView, "ScaleY", 0.9f, 1f)
         animator4.interpolator = AnticipateOvershootInterpolator()
         val set = AnimatorSet()
         set.playTogether(animator2, animator3, animator4)

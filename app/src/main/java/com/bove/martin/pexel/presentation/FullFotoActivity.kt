@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bove.martin.pexel.AppConstants
-import com.bove.martin.pexel.AppConstants.AppErrors
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.databinding.ActivityFullFotoBinding
 import com.bumptech.glide.Glide
@@ -61,7 +60,7 @@ class FullFotoActivity : AppCompatActivity() {
                 if (!havePermission) {
                     Toast.makeText(
                         this@FullFotoActivity,
-                        AppErrors.SHARE_PERMISSION_ERROR.getErrorMessage(),
+                        R.string.share_permission_error,
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
@@ -71,7 +70,7 @@ class FullFotoActivity : AppCompatActivity() {
         }
 
         viewModel.operationResult.observe(this) { operationResult ->
-            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje?.asString(this), Toast.LENGTH_SHORT).show()
             enableDisableUI(true)
             showHideProgressBar(false)
             if (operationResult.operationResult) {
@@ -91,7 +90,7 @@ class FullFotoActivity : AppCompatActivity() {
             largePhotoUrl = intent.getStringExtra(AppConstants.LARGE_FOTO_URL).toString()
             Glide.with(this).load(photoUrl).centerInside().into(binding.imageViewLargeFoto)
         } else {
-            showErrors(AppErrors.LOAD_IMAGE_ERROR.getErrorMessage())
+            showErrors(getString(R.string.load_image_error))
         }
         if (intent.hasExtra(AppConstants.PHOTOGRAPHER_URL)) {
             photographerUrl = intent.getStringExtra(AppConstants.PHOTOGRAPHER_URL)
@@ -153,9 +152,9 @@ class FullFotoActivity : AppCompatActivity() {
         }
     }
 
-    private fun startUrlIntent(Url: String) {
+    private fun startUrlIntent(destinationUrl: String) {
         val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse(Url)
+        i.data = Uri.parse(destinationUrl)
         startActivity(i)
     }
 

@@ -1,11 +1,12 @@
 package com.bove.martin.pexel.data.network
 
 import android.content.Context
-import com.bove.martin.pexel.AppConstants.AppErrors
 import com.bove.martin.pexel.AppConstants.ITEM_NUMBER
+import com.bove.martin.pexel.R
 import com.bove.martin.pexel.data.network.retrofit.PexelService
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.presentation.utils.UiText
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Response
 import javax.inject.Inject
@@ -26,13 +27,13 @@ class FotosRepository @Inject constructor(private val fotosApi: PexelService, @A
                 if (!response.body().isNullOrEmpty()) {
                     OperationResult(true, null, response.body())
                 } else {
-                    notifyError(AppErrors.LOAD_IMAGE_ERROR)
+                    notifyError(UiText.StringResource(R.string.load_image_error))
                 }
             } else {
-                notifyError(AppErrors.CONNECTION_ERROR)
+                notifyError(UiText.StringResource(R.string.connection_error))
             }
         } else {
-            notifyError(AppErrors.PAGING_ERROR)
+            notifyError(UiText.StringResource(R.string.paging_error))
         }
     }
 
@@ -46,20 +47,20 @@ class FotosRepository @Inject constructor(private val fotosApi: PexelService, @A
                     if (!response.body().isNullOrEmpty()) {
                         OperationResult(true, null, response.body())
                     } else {
-                        notifyError(AppErrors.LOAD_IMAGE_ERROR)
+                        notifyError(UiText.StringResource(R.string.load_image_error))
                     }
                 } else {
-                    notifyError(AppErrors.CONNECTION_ERROR)
+                    notifyError(UiText.StringResource(R.string.connection_error))
                 }
             } else {
-                notifyError(AppErrors.QUERY_STRING_ERROR)
+                notifyError(UiText.StringResource(R.string.query_string_error))
             }
         } else {
-            notifyError(AppErrors.PAGING_ERROR)
+            notifyError(UiText.StringResource(R.string.paging_error))
         }
     }
 
-    private fun notifyError(errorString: AppErrors): OperationResult {
-        return OperationResult(false, errorString.getErrorMessage(), null)
+    private fun notifyError(errorString: UiText): OperationResult {
+        return OperationResult(false, errorString, null)
     }
 }

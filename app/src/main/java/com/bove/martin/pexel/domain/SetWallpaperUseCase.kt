@@ -1,10 +1,11 @@
 package com.bove.martin.pexel.domain
 
 import android.content.Context
-import com.bove.martin.pexel.AppConstants.AppErrors
+import com.bove.martin.pexel.R
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.WallpaperOperations
 import com.bove.martin.pexel.domain.utils.UriToBitmap
+import com.bove.martin.pexel.presentation.utils.UiText
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -20,9 +21,9 @@ open class SetWallpaperUseCase  @Inject constructor(private val wallpaperOperati
             if (bitmap != null) {
                 wallpaperOperations.setWallpaper(bitmap)
             } else
-                OperationResult(false, AppErrors.SET_WALLPAPER_ERROR.getErrorMessage(), null)
+                OperationResult(false, UiText.StringResource(R.string.set_wallpaper_error), null)
         } catch (e: Exception) {
-            OperationResult(false, AppErrors.PHOTO_URL_ERROR.getErrorMessage(), null)
+            OperationResult(false, UiText.StringResource(R.string.photo_url_error), null)
         }
     }
 }

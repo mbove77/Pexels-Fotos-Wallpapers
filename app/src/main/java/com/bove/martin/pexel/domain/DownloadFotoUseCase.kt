@@ -1,10 +1,11 @@
 package com.bove.martin.pexel.domain
 
 import android.content.Context
-import com.bove.martin.pexel.AppConstants
+import com.bove.martin.pexel.R
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.FileOperations
 import com.bove.martin.pexel.domain.utils.UriToBitmap
+import com.bove.martin.pexel.presentation.utils.UiText
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -20,9 +21,9 @@ class DownloadFotoUseCase @Inject constructor(private  val fileOperations: FileO
             if (bitmap != null)
                 fileOperations.saveImage(context, bitmap)
             else
-                OperationResult(false, AppConstants.AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+                OperationResult(false, UiText.StringResource(R.string.load_image_error), null)
         }catch (e: Exception) {
-            OperationResult(false, AppConstants.AppErrors.PHOTO_URL_ERROR.getErrorMessage(), null)
+            OperationResult(false, UiText.StringResource(R.string.photo_url_error), null)
         }
 
     }
