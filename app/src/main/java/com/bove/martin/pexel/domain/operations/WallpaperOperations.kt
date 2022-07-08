@@ -4,9 +4,9 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
-import com.bove.martin.pexel.AppConstants.AppErrors
-import com.bove.martin.pexel.AppConstants.AppMessages
+import com.bove.martin.pexel.R
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.presentation.utils.UiText
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.IOException
 import javax.inject.Inject
@@ -22,9 +22,9 @@ class WallpaperOperations @Inject constructor(@ApplicationContext val context: C
         try {
             wallpaperManager.setBitmap(resource)
         } catch (e: IOException) {
-            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+            return OperationResult(false, UiText.StringResource(R.string.load_image_error), null)
         }
-        return OperationResult(true, AppMessages.WALLPAPER_CHANGE.getMessage(), null)
+        return OperationResult(true, UiText.StringResource(R.string.wallpaper_change), null)
     }
 
     fun setLockScreen(resource: Bitmap): OperationResult {
@@ -32,11 +32,11 @@ class WallpaperOperations @Inject constructor(@ApplicationContext val context: C
             if (Build.VERSION.SDK_INT >= 24) {
                 wallpaperManager.setBitmap(resource, null, true, WallpaperManager.FLAG_LOCK)
             } else {
-                return OperationResult(false, AppErrors.LOCKSCREEN_API_VERSION_ERROR.getErrorMessage(), null)
+                return OperationResult(false, UiText.StringResource(R.string.lockscreen_api_version_error), null)
             }
         } catch (e: IOException) {
-            return OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+            return OperationResult(false, UiText.StringResource(R.string.load_image_error), null)
         }
-        return OperationResult(true, AppMessages.WALLPAPER_CHANGE.getMessage(), null)
+        return OperationResult(true, UiText.StringResource(R.string.wallpaper_change), null)
     }
 }
