@@ -73,6 +73,21 @@ class FileOperationsTest {
         resultUri = Uri.parse(result.resultObject.toString())
     }
 
+    @Test
+    @TargetApi(29)
+    fun operation_with_bitmap_api29_return_true() {
+        //Given
+        val operation = FileOperations()
+
+        //When
+        val result = operation.saveImage(appContext, testBmp)
+
+        //Then
+        Assert.assertNotNull(result)
+        Assert.assertTrue(result.operationResult)
+        resultUri = Uri.parse(result.resultObject.toString())
+    }
+
     @After
     fun after() {
         if (resultUri != null) {

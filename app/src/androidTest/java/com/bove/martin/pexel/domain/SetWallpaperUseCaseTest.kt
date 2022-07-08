@@ -4,10 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bove.martin.pexel.AppConstants.AppErrors
-import com.bove.martin.pexel.AppConstants.AppMessages
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.WallpaperOperations
+import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -54,7 +53,6 @@ class SetWallpaperUseCaseTest {
 
         //Then
         Assert.assertTrue(result.operationResult)
-        Assert.assertTrue(result.resultMensaje == AppMessages.WALLPAPER_CHANGE.getMessage())
     }
 
     @Test
@@ -67,7 +65,6 @@ class SetWallpaperUseCaseTest {
 
         //Then
         Assert.assertFalse(result.operationResult)
-        Assert.assertTrue(result.resultMensaje == AppErrors.PHOTO_URL_ERROR.getErrorMessage())
     }
 
 
@@ -76,7 +73,8 @@ class SetWallpaperUseCaseTest {
         //Given
         setWallpaperUseCase = SetWallpaperUseCase(wallpaperOperationsMock, appContext)
         val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
-        every { wallpaperOperationsMock.setWallpaper(any()) } returns OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+        every { wallpaperOperationsMock.setWallpaper(any()) } returns
+                OperationResult(false, UiText.DynamicString("Error"), null)
 
         //When
         val result = setWallpaperUseCase(fotoUrl)

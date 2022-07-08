@@ -5,6 +5,7 @@ import com.bove.martin.pexel.domain.DownloadFotoUseCase
 import com.bove.martin.pexel.domain.SetLockScreenUserCase
 import com.bove.martin.pexel.domain.SetWallpaperUseCase
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +39,10 @@ class FullFotoActivityViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        fullFotoActivityViewModel = FullFotoActivityViewModel(setWallpaperUseCase, setLockScreenUserCase, downloadFotoUseCase)
+        fullFotoActivityViewModel = FullFotoActivityViewModel(
+            setWallpaperUseCase,
+            setLockScreenUserCase,
+            downloadFotoUseCase)
         Dispatchers.setMain(Dispatchers.Unconfined)
     }
 
@@ -46,7 +50,7 @@ class FullFotoActivityViewModelTest {
     @Test
     fun `when call setWallpaper with valid params return ok result`() = runTest {
         //Given
-        coEvery { setWallpaperUseCase(any()) } returns OperationResult(true, "Ok message", null)
+        coEvery { setWallpaperUseCase(any()) } returns OperationResult(true, UiText.DynamicString("Test"), null)
 
         //When
         fullFotoActivityViewModel.setWallpaper("fileURL")
@@ -59,7 +63,7 @@ class FullFotoActivityViewModelTest {
     @Test
     fun `when call setWallpaper and return fail result`() = runTest {
         //Given
-        coEvery { setWallpaperUseCase(any()) } returns OperationResult(false, "Error message", null)
+        coEvery { setWallpaperUseCase(any()) } returns OperationResult(false, UiText.DynamicString("Test"), null)
 
         //When
         fullFotoActivityViewModel.setWallpaper("fileURL")
@@ -73,7 +77,7 @@ class FullFotoActivityViewModelTest {
     @Test
     fun `when call downloadFoto with valid params set savedFoto liveData`() = runTest {
         //Given
-        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, "Ok message", "string")
+        coEvery { downloadFotoUseCase(any()) } returns OperationResult(true, UiText.DynamicString("Test"), "string")
 
         //When
         fullFotoActivityViewModel.downloadFoto("fileURL")
@@ -86,7 +90,7 @@ class FullFotoActivityViewModelTest {
     @Test
     fun `when call downloadFoto and return fail result`() = runTest {
         //Given
-        coEvery { downloadFotoUseCase("fileURL") } returns OperationResult(false, "Error message", null)
+        coEvery { downloadFotoUseCase("fileURL") } returns OperationResult(false, UiText.DynamicString("Test"), null)
 
         //When
         fullFotoActivityViewModel.downloadFoto("fileURL")

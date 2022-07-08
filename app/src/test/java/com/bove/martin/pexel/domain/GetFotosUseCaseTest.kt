@@ -1,9 +1,9 @@
 package com.bove.martin.pexel.domain
 
-import com.bove.martin.pexel.AppConstants
 import com.bove.martin.pexel.data.network.FotosRepository
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -37,7 +37,7 @@ class GetFotosUseCaseTest {
     @Test
     fun `when call with pageNumber 0 return error`() = runBlocking {
         //Given
-        coEvery { fotosRepository.getCuratedFotos(0) } returns OperationResult(false, AppConstants.AppErrors.PAGING_ERROR.getErrorMessage(), null)
+        coEvery { fotosRepository.getCuratedFotos(0) } returns OperationResult(false, UiText.DynamicString("Test"), null)
 
         //When
         val response = getFotosUseCase(0)
@@ -46,7 +46,6 @@ class GetFotosUseCaseTest {
         coVerify(exactly = 1) { fotosRepository.getCuratedFotos(0) }
         Assert.assertFalse(response.operationResult)
         Assert.assertNotNull(response.resultMensaje)
-        Assert.assertTrue(response.resultMensaje == AppConstants.AppErrors.PAGING_ERROR.getErrorMessage())
     }
 
     @Test

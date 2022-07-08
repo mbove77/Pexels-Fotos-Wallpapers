@@ -6,9 +6,9 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bove.martin.pexel.AppConstants.AppErrors
 import com.bove.martin.pexel.R
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -54,7 +54,7 @@ class WallpaperOperationsTest {
     @Test
     fun when_set_wallpaper_and_return_false() {
         //Given
-        every { wallpaperOperationsMock.setWallpaper(any()) } returns OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+        every { wallpaperOperationsMock.setWallpaper(any()) } returns OperationResult(false, UiText.DynamicString("Error"), null)
 
         //When
         val result= wallpaperOperationsMock.setWallpaper(testBmp)
@@ -67,7 +67,8 @@ class WallpaperOperationsTest {
     @Test
     fun when_set_lockScreen_and_return_false() {
         //Given
-        every { wallpaperOperationsMock.setLockScreen(any()) } returns OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+        every { wallpaperOperationsMock.setLockScreen(any()) } returns
+                OperationResult(false, UiText.DynamicString("Error"), null)
 
         //When
         val result = wallpaperOperationsMock.setLockScreen(testBmp)

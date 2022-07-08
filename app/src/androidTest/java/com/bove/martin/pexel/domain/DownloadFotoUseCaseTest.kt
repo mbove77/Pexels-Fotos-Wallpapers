@@ -4,9 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.bove.martin.pexel.AppConstants.AppErrors
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.FileOperations
+import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
@@ -57,7 +57,7 @@ class DownloadFotoUseCaseTest {
         //Given
         downloadFotoUseCase = DownloadFotoUseCase(fileOperationsMock, appContext)
         val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
-        every { fileOperationsMock.saveImage(any(), any()) } returns OperationResult(false, AppErrors.LOAD_IMAGE_ERROR.getErrorMessage(), null)
+        every { fileOperationsMock.saveImage(any(), any()) } returns OperationResult(false, UiText.DynamicString("Error"), null)
 
         //When
         val result = downloadFotoUseCase(fotoUrl)
