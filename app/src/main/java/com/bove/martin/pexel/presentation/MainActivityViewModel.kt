@@ -3,13 +3,14 @@ package com.bove.martin.pexel.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bove.martin.pexel.di.DispacherModule.MainDispatcher
 import com.bove.martin.pexel.domain.GetFotosUseCase
 import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
 import com.bove.martin.pexel.domain.GetSearchedFotosUseCase
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.Search
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor(
     private val getFotosUseCase: GetFotosUseCase,
     private val getPopularSearchesUseCase: GetPupularSearchesUseCase,
-    private val getSearchedFotosUseCase: GetSearchedFotosUseCase
+    private val getSearchedFotosUseCase: GetSearchedFotosUseCase,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
     ) : ViewModel() {
 
     val fotos = MutableLiveData<List<Foto>>()
@@ -43,13 +45,13 @@ class MainActivityViewModel @Inject constructor(
             getSearchedFotos()
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun getCuratedFotos() {
         viewModelScope.launch {
             val response = getFotosUseCase(pageNumber)
             if (response.operationResult) {
-                withContext(Dispatchers.Main) {
-                    _fotos.addAll(response.resultObject as List<Foto>)
+                withContext(mainDispatcher) {
+                    val listOfFotos = (response.resultObject as List<*>).filterIsInstance<Foto>()
+                    _fotos.addAll(listOfFotos)
                     fotos.postValue(_fotos)
                 }
             } else {
@@ -58,13 +60,13 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun getSearchedFotos() {
         viewModelScope.launch {
             val response = getSearchedFotosUseCase(queryString, pageNumber)
             if (response.operationResult) {
-                withContext(Dispatchers.Main) {
-                    _fotos.addAll(response.resultObject as List<Foto>)
+                withContext(mainDispatcher) {
+                    val listOfFotos = (response.resultObject as List<*>).filterIsInstance<Foto>()
+                    _fotos.addAll(listOfFotos)
                     fotos.postValue(_fotos)
                 }
             } else {
@@ -78,7 +80,7 @@ class MainActivityViewModel @Inject constructor(
             val response = getPopularSearchesUseCase()
 
             if (response.isNotEmpty()) {
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     searches.postValue(response)
                 }
             }

@@ -70,7 +70,10 @@ class FullFotoActivity : AppCompatActivity() {
         }
 
         viewModel.operationResult.observe(this) { operationResult ->
-            Toast.makeText(this@FullFotoActivity, operationResult.resultMensaje?.asString(this), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@FullFotoActivity,
+                operationResult.resultMensaje?.asString(this),
+                Toast.LENGTH_SHORT).show()
+
             enableDisableUI(true)
             showHideProgressBar(false)
             if (operationResult.operationResult) {
