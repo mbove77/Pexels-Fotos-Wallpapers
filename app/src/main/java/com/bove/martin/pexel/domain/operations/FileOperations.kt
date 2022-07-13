@@ -27,72 +27,59 @@ import javax.inject.Inject
  */
 class FileOperations @Inject constructor() {
 
+    private lateinit var  imageFileInformation: ImageFileInformation
+
     fun saveImage(context: Context, bitmap: Bitmap): OperationResult {
         val uniqueName = UUID.randomUUID().toString()
 
-        val imageFileInformation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                getFileInformationForNewDevices(context, uniqueName)
-             else
-                getFileInformationForOldDevices(context, uniqueName)
         try {
+            imageFileInformation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                getFileInformationForNewDevices(context, uniqueName)
+            else
+                getFileInformationForOldDevices(context, uniqueName)
+
             if (imageFileInformation.imageUri != null && imageFileInformation.outputString != null) {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, imageFileInformation.outputString)
-                imageFileInformation.outputString.close()
+                imageFileInformation.outputString?.close()
             } else {
-                OperationResult(false,
-                    UiText.StringResource(R.string.load_image_error), null)
+                OperationResult(false, UiText.StringResource(R.string.load_image_error), null)
             }
         } catch (error: RuntimeException) {
-            Logger.e(error.toString(), error.localizedMessage)
-            imageFileInformation.imageUri?.let { deleteFailedPhoto(imageFileInformation.imageUri, context) }
-
-            return OperationResult(false,
-                UiText.StringResource(R.string.load_image_error), null)
+            Logger.e(error.toString())
+            imageFileInformation.imageUri.let { deleteFailedPhoto(imageFileInformation.imageUri!!, context) }
+            return OperationResult(false, UiText.StringResource(R.string.load_image_error), null)
         }
         return OperationResult(true,
             UiText.StringResource(R.string.file_downloaded), imageFileInformation.imageUri.toString())
     }
 
-
+    @Throws(RuntimeException::class)
     private fun getFileInformationForNewDevices(context: Context, uniqueName: String): ImageFileInformation {
-        var outputString: OutputStream? = null
-        return try {
-            val contentValues = ContentValues()
-            val resolver = context.contentResolver
-            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "$uniqueName.jpg")
-            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/$IMAGES_FOLDER_NAME")
-            val imageUri =
-                resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            outputString = imageUri?.let { resolver.openOutputStream(it) }
+        var outputString: OutputStream?
+        val contentValues = ContentValues()
+        val resolver = context.contentResolver
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "$uniqueName.jpg")
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/$IMAGES_FOLDER_NAME")
+        val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        outputString = imageUri?.let { resolver.openOutputStream(it) }
 
-            ImageFileInformation(imageUri, outputString)
-        } catch (error: RuntimeException) {
-            Logger.e(error.toString(), error.localizedMessage)
-            outputString?.close()
-            ImageFileInformation(null, null)
-        }
+       return ImageFileInformation(imageUri, outputString)
     }
 
+    @Throws(RuntimeException::class)
     private fun getFileInformationForOldDevices(context: Context, uniqueName: String): ImageFileInformation {
-        var outputString: OutputStream? = null
-        return try {
-            val imagesDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                .toString() + File.separator + IMAGES_FOLDER_NAME
-            val file = File(imagesDir)
-            if (!file.exists()) {
-                file.mkdir()
-            }
-            val image = File(imagesDir, "$uniqueName.jpg")
-            outputString = FileOutputStream(image)
-            val imageUri = FileProvider.getUriForFile(context, FILE_PROVIDER, image)
+        var outputString: OutputStream?
+        val imagesDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+            .toString() + File.separator + IMAGES_FOLDER_NAME
+        val file = File(imagesDir)
+        if (!file.exists())
+            file.mkdir()
+        val image = File(imagesDir, "$uniqueName.jpg")
+        outputString = FileOutputStream(image)
+        val imageUri = FileProvider.getUriForFile(context, FILE_PROVIDER, image)
 
-             ImageFileInformation(imageUri, outputString)
-        } catch (error: RuntimeException) {
-            Logger.e(error.toString(), error.localizedMessage)
-            outputString?.close()
-            ImageFileInformation(null, null)
-        }
+        return ImageFileInformation(imageUri, outputString)
     }
 
     private fun deleteFailedPhoto(imageUri: Uri, context: Context) {

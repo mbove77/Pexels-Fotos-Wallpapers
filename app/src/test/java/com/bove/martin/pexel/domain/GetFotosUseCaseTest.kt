@@ -37,7 +37,8 @@ class GetFotosUseCaseTest {
     @Test
     fun `when call with pageNumber 0 return error`() = runBlocking {
         //Given
-        coEvery { fotosRepository.getCuratedFotos(0) } returns OperationResult(false, UiText.DynamicString("Test"), null)
+        coEvery { fotosRepository.getCuratedFotos(0) } returns
+                OperationResult(false, UiText.DynamicString("Test"), null)
 
         //When
         val response = getFotosUseCase(0)
@@ -52,7 +53,8 @@ class GetFotosUseCaseTest {
     fun `when call with pageNumber 1 return list`() = runBlocking {
         //Given
         val fotoList = listOf(foto)
-        coEvery { fotosRepository.getCuratedFotos(1) } returns OperationResult(true, null, fotoList)
+        coEvery { fotosRepository.getCuratedFotos(1) } returns
+                OperationResult(true, null, fotoList)
 
         //When
         val response = getFotosUseCase(1)

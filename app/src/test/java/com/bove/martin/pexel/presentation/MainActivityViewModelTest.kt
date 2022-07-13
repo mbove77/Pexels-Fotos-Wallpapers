@@ -44,8 +44,14 @@ class MainActivityViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        mainActivityViewModel = MainActivityViewModel(getFotosUseCase,getPupularSearchesUseCase,getSearchedFotosUseCase)
         Dispatchers.setMain(Dispatchers.Unconfined)
+
+        mainActivityViewModel = MainActivityViewModel(
+            getFotosUseCase,
+            getPupularSearchesUseCase,
+            getSearchedFotosUseCase,
+            Dispatchers.Unconfined
+        )
     }
 
     @Test

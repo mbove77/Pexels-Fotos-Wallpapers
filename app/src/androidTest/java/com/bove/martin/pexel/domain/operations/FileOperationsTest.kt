@@ -32,19 +32,6 @@ class FileOperationsTest {
     }
 
     @Test
-    fun operation_with_null_bitmap_return_false() {
-        //Given
-        val operation = FileOperations()
-
-        //When
-        val result = operation.saveImage(appContext, null)
-
-        //Then
-        Assert.assertNotNull(result)
-        Assert.assertFalse(result.operationResult)
-    }
-
-    @Test
     fun operation_with_bitmap_return_true() {
         //Given
         val operation = FileOperations()
