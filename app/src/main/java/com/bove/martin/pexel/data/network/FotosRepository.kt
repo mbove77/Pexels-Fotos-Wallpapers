@@ -16,7 +16,9 @@ import javax.inject.Inject
  * E-mail: mbove77@gmail.com
  */
 
-class FotosRepository @Inject constructor(private val fotosApi: PexelService, @ApplicationContext val context: Context) {
+class FotosRepository @Inject constructor(
+    private val fotosApi: PexelService,
+    @ApplicationContext val context: Context) {
 
     suspend fun getCuratedFotos(pageNumber: Int): OperationResult {
         return if(pageNumber > 0) {

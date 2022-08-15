@@ -3,7 +3,7 @@ package com.bove.martin.pexel.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bove.martin.pexel.di.DispacherModule.MainDispatcher
+import com.bove.martin.pexel.di.DispatchersModule.MainDispatcher
 import com.bove.martin.pexel.domain.GetFotosUseCase
 import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
 import com.bove.martin.pexel.domain.GetSearchedFotosUseCase

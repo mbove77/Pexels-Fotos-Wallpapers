@@ -12,7 +12,7 @@ import javax.inject.Qualifier
  * Created by Martín Bove on 13/7/2022.
  * E-mail: mbove77@gmail.com
  */
-object DispacherModule {
+object DispatchersModule {
     @Module
     @InstallIn(SingletonComponent::class)
     object DispatcherModule {
