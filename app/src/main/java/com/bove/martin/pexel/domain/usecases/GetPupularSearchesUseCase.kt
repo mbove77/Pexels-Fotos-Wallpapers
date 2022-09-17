@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.usecases
 
 import com.bove.martin.pexel.data.database.PopularSearchesRepository
 import com.bove.martin.pexel.domain.model.Search

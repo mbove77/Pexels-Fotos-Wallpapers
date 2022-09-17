@@ -3,6 +3,7 @@ package com.bove.martin.pexel.domain
 import com.bove.martin.pexel.data.network.FotosRepository
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.domain.usecases.GetFotosUseCase
 import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

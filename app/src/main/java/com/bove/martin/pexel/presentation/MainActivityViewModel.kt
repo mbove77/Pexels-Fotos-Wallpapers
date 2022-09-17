@@ -4,11 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bove.martin.pexel.di.DispatchersModule.MainDispatcher
-import com.bove.martin.pexel.domain.GetFotosUseCase
-import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
-import com.bove.martin.pexel.domain.GetSearchedFotosUseCase
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.Search
+import com.bove.martin.pexel.domain.usecases.GetFotosUseCase
+import com.bove.martin.pexel.domain.usecases.GetPupularSearchesUseCase
+import com.bove.martin.pexel.domain.usecases.GetSearchedFotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch

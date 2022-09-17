@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.operations.WallpaperOperations
+import com.bove.martin.pexel.domain.usecases.SetWallpaperUseCase
 import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -46,7 +47,8 @@ class SetWallpaperUseCaseTest {
     @Test
     fun when_call_with_setWallpaper_and_returns_operation_ok() {
         //Given
-        val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
+        val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg" +
+                "?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
 
         //When
         val result = setWallpaperUseCase(fotoUrl)
@@ -72,7 +74,8 @@ class SetWallpaperUseCaseTest {
     fun when_call_setWallpaper_and_returns_operation_fail() {
         //Given
         setWallpaperUseCase = SetWallpaperUseCase(wallpaperOperationsMock, appContext)
-        val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
+        val fotoUrl = "https://images.pexels.com/photos/8717/food-pot-kitchen-cooking.jpg" +
+                "?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=400&w=520"
         every { wallpaperOperationsMock.setWallpaper(any()) } returns
                 OperationResult(false, UiText.DynamicString("Error"), null)
 

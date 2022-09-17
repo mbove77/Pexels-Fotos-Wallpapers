@@ -3,12 +3,14 @@ package com.bove.martin.pexel.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bove.martin.pexel.domain.DownloadFotoUseCase
-import com.bove.martin.pexel.domain.SetLockScreenUserCase
-import com.bove.martin.pexel.domain.SetWallpaperUseCase
+import com.bove.martin.pexel.di.DispatchersModule.IoDispatcher
+import com.bove.martin.pexel.di.DispatchersModule.MainDispatcher
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.domain.usecases.DownloadFotoUseCase
+import com.bove.martin.pexel.domain.usecases.SetLockScreenUserCase
+import com.bove.martin.pexel.domain.usecases.SetWallpaperUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -21,7 +23,9 @@ import javax.inject.Inject
 class FullFotoActivityViewModel @Inject constructor(
     private val setWallpaperUseCase: SetWallpaperUseCase,
     private val setLockScreenUserCase: SetLockScreenUserCase,
-    private val downloadFotoUseCase: DownloadFotoUseCase
+    private val downloadFotoUseCase: DownloadFotoUseCase,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ): ViewModel() {
 
     val haveStoragePermission = MutableLiveData<Boolean>()
@@ -33,30 +37,30 @@ class FullFotoActivityViewModel @Inject constructor(
     }
 
     fun setWallpaper(url: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val resultOperation = setWallpaperUseCase(url)
 
-            withContext(Dispatchers.Main) {
+            withContext(mainDispatcher) {
                 operationResult.postValue(resultOperation)
             }
         }
     }
 
     fun setLockScreen(url: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val resultOperation = setLockScreenUserCase(url)
 
-            withContext(Dispatchers.Main) {
+            withContext(mainDispatcher) {
                 operationResult.postValue(resultOperation)
             }
         }
     }
 
     fun downloadFoto(fotoUrl:String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val resultOperation = downloadFotoUseCase(fotoUrl)
 
-            withContext(Dispatchers.Main) {
+            withContext(mainDispatcher) {
                if (resultOperation.operationResult ) {
                    savedFoto.postValue(resultOperation.resultObject as String)
                } else {

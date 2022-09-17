@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.usecases
 
 import android.content.Context
 import com.bove.martin.pexel.R
@@ -13,8 +13,11 @@ import javax.inject.Inject
  * Created by Martín Bove on 26/6/2022.
  * E-mail: mbove77@gmail.com
  */
-class SetLockScreenUserCase @Inject constructor(private val wallpaperOperations: WallpaperOperations, @ApplicationContext val context: Context) {
+class SetLockScreenUserCase @Inject constructor(
+    private val wallpaperOperations: WallpaperOperations,
+    @ApplicationContext val context: Context) {
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     operator fun invoke(url: String): OperationResult {
         return try {
             val bitmap = UriToBitmap().getBitmap(url, context)

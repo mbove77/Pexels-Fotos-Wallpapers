@@ -20,4 +20,7 @@ data class SearchEntity(
     )
 
 
-fun Search.toDatabase() = SearchEntity(searchInEnglish = searchInEnglish, searchInSpanish = searchInSpanish, photo = photo)
+fun Search.toDatabase() = SearchEntity(
+    searchInEnglish = searchInEnglish,
+    searchInSpanish = searchInSpanish,
+    photo = photo)

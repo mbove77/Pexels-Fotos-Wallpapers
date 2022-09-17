@@ -1,12 +1,12 @@
 package com.bove.martin.pexel.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.bove.martin.pexel.domain.GetFotosUseCase
-import com.bove.martin.pexel.domain.GetPupularSearchesUseCase
-import com.bove.martin.pexel.domain.GetSearchedFotosUseCase
 import com.bove.martin.pexel.domain.model.Foto
 import com.bove.martin.pexel.domain.model.OperationResult
 import com.bove.martin.pexel.domain.model.Search
+import com.bove.martin.pexel.domain.usecases.GetFotosUseCase
+import com.bove.martin.pexel.domain.usecases.GetPupularSearchesUseCase
+import com.bove.martin.pexel.domain.usecases.GetSearchedFotosUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -154,5 +154,4 @@ class MainActivityViewModelTest {
     fun onAfter() {
         Dispatchers.resetMain()
     }
-
 }

@@ -1,10 +1,10 @@
 package com.bove.martin.pexel.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.bove.martin.pexel.domain.DownloadFotoUseCase
-import com.bove.martin.pexel.domain.SetLockScreenUserCase
-import com.bove.martin.pexel.domain.SetWallpaperUseCase
 import com.bove.martin.pexel.domain.model.OperationResult
+import com.bove.martin.pexel.domain.usecases.DownloadFotoUseCase
+import com.bove.martin.pexel.domain.usecases.SetLockScreenUserCase
+import com.bove.martin.pexel.domain.usecases.SetWallpaperUseCase
 import com.bove.martin.pexel.presentation.utils.UiText
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -39,11 +39,16 @@ class FullFotoActivityViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        val mainDispatcher = Dispatchers.Unconfined
+
         fullFotoActivityViewModel = FullFotoActivityViewModel(
             setWallpaperUseCase,
             setLockScreenUserCase,
-            downloadFotoUseCase)
-        Dispatchers.setMain(Dispatchers.Unconfined)
+            downloadFotoUseCase,
+            mainDispatcher,
+            mainDispatcher)
+
+        Dispatchers.setMain(mainDispatcher)
     }
 
 

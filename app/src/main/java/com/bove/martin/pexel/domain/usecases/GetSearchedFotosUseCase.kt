@@ -1,4 +1,4 @@
-package com.bove.martin.pexel.domain
+package com.bove.martin.pexel.domain.usecases
 
 import com.bove.martin.pexel.data.network.FotosRepository
 import com.bove.martin.pexel.domain.model.OperationResult
